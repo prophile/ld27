@@ -1,11 +1,17 @@
 var Game = function() {
     return function() {
+        function unixTime() {
+            return new Date().getTime() / 1000;
+        }
+
         var that = this;
+        var lastSpin = unixTime();
 
         var renderer = null;
         var physics  = null;
         var stage    = null;
         var context  = null;
+
 
         this.setupCanvas = function() {
             renderer = PIXI.autoDetectRenderer(canvasSize(), canvasSize());
@@ -24,7 +30,7 @@ var Game = function() {
 
         this.setupGame = function() {
             pixiSetup();
-            physics = new Physics(context);
+            physics = new Physics(context, canvasSize(), canvasSize());
         }
 
 
@@ -35,26 +41,30 @@ var Game = function() {
         }
 
         this.update = function() {
-            var graphics = new PIXI.Graphics();
+            spinIfNecessary();
+            physics.update();
+            $("#container").rotate(physics.getRotation());
+        }
 
-            // begin a green fill..
-            graphics.beginFill(0x00FF00);
+        function spinIfNecessary() {
+            if (unixTime() - lastSpin > 1) {
+                spin();
+            }
+        }
 
-            // draw a triangle using lines
-            graphics.moveTo(0,0);
-            graphics.lineTo(0, 100);
-            graphics.lineTo(100, 0);
-
-            // end the fill
-            graphics.endFill();
-
-            // add it the stage so we see it on our screens..
-            stage.addChild(graphics);
+        function spin() {
+            lastSpin = unixTime();
+            physics.setTargetRotation(Math.random()*720);
+            rotateCanvas(physics.getRotation());
         }
 
         this.render = function() {
+            physics.draw();
             renderer.render(stage);
-            physics.world.DrawDebugData();
+        }
+
+        function rotateCanvas(rotation) {
+            console.log(rotation);
         }
 
         function canvasSize() {
@@ -72,5 +82,6 @@ var Game = function() {
             stage.position.y = canvasSize()/2;
             requestAnimFrame(that.step);
         }
+
     }
 }();

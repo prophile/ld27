@@ -4,8 +4,7 @@ SOURCES=constants.js main.js physics.js game.js
 all: deps ld.js
 
 ld.js: $(SOURCES)
-	echo "//# sourceMappingURL=ld.map" > $@
-	closure-compiler $^ --create_source_map ld.map --compilation_level SIMPLE_OPTIMIZATIONS >> $@
+	cat $^ > $@
 
 howler.min.js:
 	wget 'https://raw.github.com/goldfire/howler.js/master/howler.min.js'
