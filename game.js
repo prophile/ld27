@@ -3,12 +3,59 @@ var Game = function() {
         var that = this;
 
         var renderer = null;
-        var stag = null;
-        var bee = null;
-        beeRotationRate = null;
-        Constants.get('debug_beeRotationRate', function(x) {
-            beeRotationRate = x;
-        });
+        var physics  = null;
+        var stage    = null;
+        var context  = null;
+
+        this.setupCanvas = function() {
+            renderer = PIXI.autoDetectRenderer(canvasSize(), canvasSize());
+            $("#container").append("<canvas id='sup' width='" + canvasSize() + "' height='" + canvasSize() + "'></canvas>");
+
+            context = document.getElementById("sup").getContext("2d");
+            $("#sup").css({
+                "z-index":100000,
+                "position":"absolute",
+            })
+            $('#container').append(renderer.view);
+            $("#container").css({
+                "margin-top": ($(window).height()-canvasSize())/2
+            });
+        }
+
+        this.setupGame = function() {
+            pixiSetup();
+            physics = new Physics(context);
+        }
+
+
+        this.step = function() {
+            requestAnimFrame(that.step);
+            that.update();
+            that.render();
+        }
+
+        this.update = function() {
+            var graphics = new PIXI.Graphics();
+
+            // begin a green fill..
+            graphics.beginFill(0x00FF00);
+
+            // draw a triangle using lines
+            graphics.moveTo(0,0);
+            graphics.lineTo(0, 100);
+            graphics.lineTo(100, 0);
+
+            // end the fill
+            graphics.endFill();
+
+            // add it the stage so we see it on our screens..
+            stage.addChild(graphics);
+        }
+
+        this.render = function() {
+            renderer.render(stage);
+            physics.world.DrawDebugData();
+        }
 
         function canvasSize() {
             var $window = $(window);
@@ -19,42 +66,11 @@ var Game = function() {
             return shortest/Math.sqrt(2);
         }
 
-        this.setupCanvas = function() {
-            renderer = PIXI.autoDetectRenderer(canvasSize(), canvasSize());
-            $('#container').append(renderer.view);
-            $("#container").css({
-                "margin-top": ($(window).height()-canvasSize())/2
-            });
-        }
-
-        this.step = function() {
-            requestAnimFrame(that.step);
-            that.update();
-            that.render();
-        }
-
-        this.setupGame = function() {
+        function pixiSetup() {
             stage = new PIXI.Stage(0x66FF99);
+            stage.position.x = canvasSize()/2;
+            stage.position.y = canvasSize()/2;
             requestAnimFrame(that.step);
-            texture = PIXI.Texture.fromImage('bee.png');
-            bee = new PIXI.Sprite(texture);
-
-            bee.anchor.x = 0.5;
-            bee.anchor.y = 0.5;
-
-            bee.position.x = canvasSize()/2;
-            bee.position.y = canvasSize()/2;
-            stage.addChild(bee);
-        }
-
-
-
-        this.update = function() {
-            bee.rotation += beeRotationRate;
-        }
-
-        this.render = function() {
-            renderer.render(stage);
         }
     }
 }();
