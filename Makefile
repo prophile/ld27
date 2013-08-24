@@ -1,6 +1,6 @@
 LIBRARIES=howler.min.js pixi.js underscore-min.js Bacon.min.js
 
-all: Makefile
+all: Makefile box2d.js
 	rm -f $(LIBRARIES) libraries.js
 	wget 'https://raw.github.com/goldfire/howler.js/master/howler.min.js'
 	wget 'https://raw.github.com/GoodBoyDigital/pixi.js/master/bin/pixi.js'
@@ -10,4 +10,3 @@ all: Makefile
 
 clean:
 	rm -f $(LIBRARIES)
-
