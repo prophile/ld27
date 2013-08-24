@@ -1,5 +1,6 @@
 var World = (function() {
     var objects = [];
+    var physics
 
     var add = function(obj) {
         objects.push(obj);
@@ -24,13 +25,12 @@ setInterval(function() {
 var Entity = function(name) {
     name = (name === undefined) ? "Object" : name;
 
-    var MAX_RECURSION_DEPTH = 10;
+    var MAX_RECURSION_DEPTH = 100;
     var components = [];
     var recursionTrap = 0;
 
     var target = function(message) {
         if (recursionTrap > MAX_RECURSION_DEPTH) {
-            console.log("Recursion trapped.");
             throw "Recursive message.";
         }
         //console.log("Message for " + name + ":");
@@ -65,6 +65,17 @@ var Entity = function(name) {
 
     return target;
 };
+
+var PhysicsComponent = function(body) {
+    return function(message) {
+        if (message.id === "update") {
+            var position = body.GetTransform().position;
+            this({id:"position",
+                  x: position.x * PIXELS_PER_METER,
+                  y: position.y * PIXELS_PER_METER})
+        }
+    }
+}
 
 var SpriteComponent = function(stage, sprite) {
     stage.addChild(sprite);

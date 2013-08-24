@@ -38,9 +38,9 @@ var Game = function() {
         }
 
         this.setupGame = function() {
+            physics = new Physics(context, canvasSize(), canvasSize());
             pixiSetup();
             soundSetup();
-            physics = new Physics(context, canvasSize(), canvasSize());
         }
 
 
@@ -74,7 +74,6 @@ var Game = function() {
         }
 
         function rotateCanvas(rotation) {
-            console.log(rotation);
         }
 
         function canvasSize() {
@@ -94,6 +93,7 @@ var Game = function() {
 
             bee = Bee(stage);
             World.add(bee);
+            physics.newBlock(stage);
         }
 
         function soundSetup() {

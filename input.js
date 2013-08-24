@@ -33,7 +33,6 @@ var Input = (function() {
                 mapping.push([key, command]);
             }
         });
-        console.log(mapping);
     });
     var propogateEvent = function(evt, bus) {
         _.each(mapping, function(map) {

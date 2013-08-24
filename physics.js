@@ -39,7 +39,34 @@ var Physics = function() {
         this.world.SetDebugDraw(debugDraw);
 
         newWorld();
-        newBlock();
+
+        this.newBlock = function(stage) {
+            var fd                 = new b2FixtureDef;
+            fd.shape               = new b2PolygonShape();
+            fd.shape.SetAsBox(1,1);
+
+            var bodyDef                  = new b2BodyDef();
+            bodyDef.type                 = b2Body.b2_dynamicBody;
+            bodyDef.position.x           = 150/PIXELS_PER_METER;
+            bodyDef.position.y           = 150/PIXELS_PER_METER;
+            var body = that.world.CreateBody(bodyDef);
+            body.CreateFixture(fd);
+
+            var e = new Entity();
+            console.log(Sprites.block);
+            Constants.get("block_image", function(value) {
+                var beeTexture = PIXI.Texture.fromImage(value, true);
+                var beeSprite = new PIXI.Sprite(beeTexture);
+
+                beeSprite.anchor.x = 0.5;
+                beeSprite.anchor.y = 0.5;
+
+                e.addComponent(SpriteComponent(stage, beeSprite));
+                e.addComponent(PhysicsComponent(body));
+                console.log("here");
+                World.add(e);
+            });
+        }
 
         this.draw = function() {
             that.world.DrawDebugData();
@@ -92,16 +119,5 @@ var Physics = function() {
             addWall(gameWidth, gameHeight/2, 3, 100000);
         }
 
-        function newBlock() {
-            var fd                 = new b2FixtureDef;
-            fd.shape               = new b2PolygonShape();
-            fd.shape.SetAsBox(1,1);
-
-            var bodyDef                  = new b2BodyDef();
-            bodyDef.type                 = b2Body.b2_dynamicBody;
-            bodyDef.position.x           = 150/PIXELS_PER_METER;
-            bodyDef.position.y           = 150/PIXELS_PER_METER;
-            that.world.CreateBody(bodyDef).CreateFixture(fd);
-        }
     }
 }();
