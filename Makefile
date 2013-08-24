@@ -1,5 +1,5 @@
 LIBRARIES=howler.min.js pixi.js underscore-min.js Bacon.min.js
-SOURCES=sound.js constants.js entity.js input.js main.js physics.js game.js
+SOURCES=constants.js sound.js entity.js input.js main.js physics.js game.js
 CC_FLAGS=--compilation_level WHITESPACE_ONLY
 
 all: deps ld.js
@@ -25,4 +25,6 @@ deps: Makefile box2d.js $(LIBRARIES)
 
 clean:
 	rm -f $(LIBRARIES) libraries.js
+
+.PHONY: all clean deps
 
