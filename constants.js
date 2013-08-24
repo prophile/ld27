@@ -35,6 +35,12 @@ Constants = (function() {
 
     $(_.defer(reload));
 
+    $(document).keydown(function(x) {
+        if (x.which == 65) {
+            reload();
+        }
+    });
+
     return {'getAll': getAll,
             'get': get,
             'reload': reload};

@@ -14,10 +14,12 @@ $(function() {
 
     var texture, object;
 
+    var beeRotationRate = 0.0;
+
     var animate = function() {
         requestAnimFrame(animate);
 
-        object.rotation += 0.1
+        object.rotation += beeRotationRate;
 
         renderer.render(stage);
     };
@@ -39,5 +41,9 @@ $(function() {
     object.position.y = canvasSize()/2;
 
     stage.addChild(object);
+
+    Constants.get('debug_beeRotationRate', function(x) {
+        beeRotationRate = x;
+    });
 });
 
