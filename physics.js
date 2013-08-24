@@ -53,7 +53,6 @@ var Physics = function() {
             body.CreateFixture(fd);
 
             var e = new Entity();
-            console.log(Sprites.block);
             Constants.get("block_image", function(value) {
                 var beeTexture = PIXI.Texture.fromImage(value, true);
                 var beeSprite = new PIXI.Sprite(beeTexture);
