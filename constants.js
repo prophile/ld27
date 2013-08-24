@@ -13,7 +13,7 @@ Constants = (function() {
         var typeDecoders = {'string': function(x) { return x; },
                             'float': parseFloat,
                             'int': parseFloat,
-                            'boolean': function(x) { return x == 'true'; }}
+                            'boolean': function(x) { return x; }}
         rawConstants.done(function(value) {
             var baseValues = JSON.parse(value);
             var actualConstants = {};
