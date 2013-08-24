@@ -1,6 +1,16 @@
 $(function() {
+
+    function canvasSize() {
+        var $window = $(window);
+        var width  = $window.width();
+        var height = $window.height();
+
+        var shortest = width < height ? width : height;
+        return shortest/Math.sqrt(2);
+    }
+
     var stage = new PIXI.Stage(0x66FF99);
-    var renderer = PIXI.autoDetectRenderer(400, 400);
+    var renderer = PIXI.autoDetectRenderer(canvasSize(), canvasSize());
 
     var texture, object;
 
@@ -13,6 +23,9 @@ $(function() {
     };
 
     $('#container').append(renderer.view);
+    $("#container").css({
+        "margin-top": ($(window).height()-canvasSize())/2
+    });
 
     requestAnimFrame(animate);
 
@@ -22,8 +35,8 @@ $(function() {
     object.anchor.x = 0.5;
     object.anchor.y = 0.5;
 
-    object.position.x = 200;
-    object.position.y = 150;
+    object.position.x = canvasSize()/2;
+    object.position.y = canvasSize()/2;
 
     stage.addChild(object);
 });
