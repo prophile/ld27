@@ -75,6 +75,7 @@ var Physics = function() {
 
                 e.addComponent(SpriteComponent(stage, beeSprite));
                 e.addComponent(PhysicsComponent(body));
+                e.addComponent(MovableComponent());
                 console.log("here");
                 World.add(e);
             });
