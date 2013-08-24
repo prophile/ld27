@@ -93,6 +93,8 @@ var PhysicsComponent = function(body) {
     return function(message) {
         if (message.id === "update") {
             var position = body.GetTransform().position;
+            this({id:"updatePhysics",
+                  body:body});
             this({id:"position",
                   x: position.x * PIXELS_PER_METER,
                   y: position.y * PIXELS_PER_METER})
