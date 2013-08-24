@@ -1,11 +1,11 @@
 LIBRARIES=howler.min.js pixi.js underscore-min.js Bacon.min.js
-SOURCES=constants.js main.js game.js
+SOURCES=constants.js entity.js main.js game.js
 
 all: deps ld.js
 
 ld.js: $(SOURCES)
 	echo "//# sourceMappingURL=ld.map" > $@
-	closure-compiler $^ --create_source_map ld.map --compilation_level SIMPLE_OPTIMIZATIONS >> $@
+	closure-compiler $^ --create_source_map ld.map >> $@
 
 howler.min.js:
 	wget 'https://raw.github.com/goldfire/howler.js/master/howler.min.js'
