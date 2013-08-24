@@ -2,7 +2,7 @@ Constants = (function() {
     var CONSTANTS_URI = 'http://constantine.teaisaweso.me/json'
 
     var gotConstants = new Bacon.Bus();
-    var constants = gotConstants.toProperty();
+    var constants = gotConstants.toProperty().skipDuplicates(_.isEqual);
 
     var getAll = function(callback) {
         constants.onValue(callback);
@@ -40,6 +40,9 @@ Constants = (function() {
             reload();
         }
     });
+
+    // reload periodically, for dev
+    setInterval(reload, 2500);
 
     return {'getAll': getAll,
             'get': get,
