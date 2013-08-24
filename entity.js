@@ -1,6 +1,5 @@
 var World = (function() {
     var objects = [];
-    var physics
 
     var add = function(obj) {
         objects.push(obj);
