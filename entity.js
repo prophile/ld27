@@ -20,7 +20,7 @@ var World = (function() {
 
 setInterval(function() {
     World.all(function(x) { x("update") });
-}, 1000 * (1 / 30));
+}, 1000 * (1 / 60));
 
 var FINISH = {"id": undefined};
 
