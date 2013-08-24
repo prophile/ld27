@@ -97,7 +97,7 @@ var PhysicsComponent = function(body) {
                   body:body});
             this({id:"position",
                   x: position.x * PIXELS_PER_METER,
-                  y: position.y * PIXELS_PER_METER})
+                  y: position.y * PIXELS_PER_METER});
         }
     }
 }
