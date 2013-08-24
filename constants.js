@@ -35,12 +35,6 @@ Constants = (function() {
 
     $(_.defer(reload));
 
-    $(document).keydown(function(x) {
-        if (x.which == 65) {
-            reload();
-        }
-    });
-
     // reload periodically, for dev
     setInterval(reload, 2500);
 
