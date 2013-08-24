@@ -94,6 +94,10 @@ var Game = function() {
             bee = Bee(stage);
             World.add(bee);
             physics.newBlock(stage);
+            Input.press("makeblock", function() {
+                console.log("hi");
+                physics.newBlock(stage);
+            });
         }
 
         function soundSetup() {
