@@ -18,7 +18,7 @@ var World = (function() {
 }());
 
 setInterval(function() {
-    World.all(function(x) { x("update") });
+    World.all(function(x) { x("update"); });
 }, 1000 * (1 / 60));
 
 var RecursionTrap = function(limit) {
@@ -32,13 +32,13 @@ var RecursionTrap = function(limit) {
         } finally {
             level--;
         }
-    }
+    };
 
     this.check = function() {
         if (level >= limit) {
             throw "Recursion overflowed.";
         }
-    }
+    };
 };
 
 var Entity = function(name) {
@@ -55,7 +55,7 @@ var Entity = function(name) {
             message = {"id": message};
         }
         return message;
-    }
+    };
 
     var target = function(message) {
         recursionTrap.check();
@@ -99,8 +99,8 @@ var PhysicsComponent = function(body) {
                   x: position.x * PIXELS_PER_METER,
                   y: position.y * PIXELS_PER_METER});
         }
-    }
-}
+    };
+};
 
 var MovableComponent = function() {
     var movement = [0, 0];
@@ -114,14 +114,14 @@ var MovableComponent = function() {
                 if (up)
                     y -= 1;
                 if (down)
-                    y += 1
+                    y += 1;
                 if (left)
                     x -= 1;
                 if (right)
                     x += 1;
                 movement = [x*speed, y*speed];
                 console.log(movement);
-            }
+            };
             Input.hold('move_up', function(x) { up = x; recompute(); });
             Input.hold('move_down', function(x) { down = x; recompute(); });
             Input.hold('move_left', function(x) { left = x; recompute(); });
@@ -133,8 +133,8 @@ var MovableComponent = function() {
                                     message.body.GetTransform().position);
             //message.body.SetLinearVelocity(new b2Vec2(movement[0], movement[1]))
         }
-    }
-}
+    };
+};
 
 var SpriteComponent = function(stage, sprite) {
     stage.addChild(sprite);

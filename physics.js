@@ -23,8 +23,6 @@ var Physics = function() {
         var b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
 
         var that = this;
-        var gameWidth = gameWidth;
-        var gameHeight = gameHeight;
         var turnRate = 0;
         var targetRotation = 0;
         var rotation = 0;
@@ -79,11 +77,11 @@ var Physics = function() {
                 console.log("here");
                 World.add(e);
             });
-        }
+        };
 
         this.draw = function() {
             that.world.DrawDebugData();
-        }
+        };
 
         this.update = function() {
             if (Math.abs(targetRotation - rotation) > turnRate) {
@@ -94,15 +92,15 @@ var Physics = function() {
             }
 
             that.world.Step(3,3);
-        }
+        };
 
         this.getRotation = function() {
             return rotation;
-        }
+        };
 
         this.setTargetRotation = function(rotation) {
             targetRotation = rotation;
-        }
+        };
 
         function newGravity() {
             var vector = rotate([0, gravity*PIXELS_PER_METER]);
@@ -137,5 +135,5 @@ var Physics = function() {
         }
 
         this.rotate = rotate;
-    }
+    };
 }();

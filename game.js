@@ -25,31 +25,31 @@ var Game = function() {
             $("#sup").css({
                 "z-index":100000,
                 "position":"absolute"
-            })
+            });
             $('#container').append(renderer.view);
             $("#container").css({
                 "margin-top": ($(window).height()-canvasSize())/2
             });
-        }
+        };
 
         this.setupGame = function() {
             physics = new Physics(context, canvasSize(), canvasSize());
             pixiSetup();
             soundSetup();
-        }
+        };
 
 
         this.step = function() {
             requestAnimFrame(that.step);
             that.update();
             that.render();
-        }
+        };
 
         this.update = function() {
             spinIfNecessary();
             physics.update();
             $("#container").rotate(physics.getRotation());
-        }
+        };
 
         function spinIfNecessary() {
             if (unixTime() - lastSpin > 10) {
@@ -66,18 +66,9 @@ var Game = function() {
         this.render = function() {
             physics.draw();
             renderer.render(stage);
-        }
+        };
 
         function rotateCanvas(rotation) {
-        }
-
-        function canvasSize() {
-            var $window = $(window);
-            var width  = $window.width();
-            var height = $window.height();
-
-            var shortest = width < height ? width : height;
-            return shortest/Math.sqrt(2);
         }
 
         function pixiSetup() {
@@ -98,6 +89,5 @@ var Game = function() {
         function soundSetup() {
             Sound.playMusic();
         }
-
-    }
+    };
 }();

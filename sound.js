@@ -16,9 +16,9 @@ var Sound = (function() {
                               console.log("Finished loading music.");
                           }});
 
-    var musicPlaying = (musicRequested.toProperty(false)
-                                      .and(musicEnabled.toProperty(true))
-                                      .and(musicLoaded.toProperty(false)));
+    var musicPlaying = (musicRequested.toProperty(false).
+                                       and(musicEnabled.toProperty(true)).
+                                       and(musicLoaded.toProperty(false)));
 
     var musicStartStop = musicPlaying.changes().skip(1).skipDuplicates();
 

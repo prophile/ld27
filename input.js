@@ -9,15 +9,15 @@ var Input = (function() {
         } else if (identifier == 'Escape') {
             return function(x) {
                 return x.keyCode == 27;
-            }
+            };
         } else if (identifier == 'Space') {
             return function(x) {
                 return x.keyCode == 32;
-            }
+            };
         } else {
             return function(x) {
                 return x.keyIdentifier == identifier;
-            }
+            };
         }
     };
     var presses = new Bacon.Bus();
@@ -29,8 +29,8 @@ var Input = (function() {
             var match = /^key_(.*)/.exec(key);
             if (match) {
                 var command = match[1];
-                var key = recogniser(binding);
-                mapping.push([key, command]);
+                var matcher = recogniser(binding);
+                mapping.push([matcher, command]);
             }
         });
     });
@@ -48,7 +48,7 @@ var Input = (function() {
         propogateEvent(evt, releases);
     });
     var bindPress = function(command, callback) {
-        presses.filter(function(x) { return x === command }).onValue(callback);
+        presses.filter(function(x) { return x === command; }).onValue(callback);
     };
     var bindHold = function(command, callback) {
         var down = presses.filter(function(x) { return x === command; });

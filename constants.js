@@ -1,5 +1,5 @@
 Constants = (function() {
-    var CONSTANTS_URI = 'http://constantine.teaisaweso.me/json'
+    var CONSTANTS_URI = 'http://constantine.teaisaweso.me/json';
 
     var gotConstants = new Bacon.Bus();
     var constants = gotConstants.toProperty().skipDuplicates(_.isEqual);
@@ -13,7 +13,7 @@ Constants = (function() {
         var typeDecoders = {'string': function(x) { return x; },
                             'float': parseFloat,
                             'int': parseFloat,
-                            'boolean': function(x) { return x; }}
+                            'boolean': function(x) { return x; }};
         rawConstants.done(function(value) {
             var baseValues = JSON.parse(value);
             var actualConstants = {};
