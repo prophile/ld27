@@ -8,9 +8,18 @@ var Game = function() {
         var lastSpin = unixTime();
 
         var renderer = null;
-        var physics  = null;
-        var stage    = null;
-        var context  = null;
+        var physics = null;
+        var context = null;
+        var stage = null;
+
+        function canvasSize() {
+            var $window = $(window);
+            var width  = $window.width();
+            var height = $window.height();
+
+            var shortest = width < height ? width : height;
+            return shortest/Math.sqrt(2);
+        }
 
 
         this.setupCanvas = function() {
@@ -81,6 +90,9 @@ var Game = function() {
             stage.position.x = canvasSize()/2;
             stage.position.y = canvasSize()/2;
             requestAnimFrame(that.step);
+
+            bee = Bee(stage);
+            World.add(bee);
         }
 
     }
