@@ -50,7 +50,7 @@ var Physics = function() {
                 function sign(x) { return x ? x < 0 ? -1 : 1 : 0; }
                 direction = sign(targetRotation - rotation);
                 console.log(direction);
-                rotation += turnRate;
+                rotation += direction * turnRate;
                 that.world.SetGravity(newGravity());
             }
 
