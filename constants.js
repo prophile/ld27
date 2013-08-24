@@ -10,11 +10,15 @@ Constants = (function() {
 
     var reload = function() {
         var rawConstants = $.get(CONSTANTS_URI);
+        var typeDecoders = {'string': function(x) { return x; },
+                            'float': parseFloat,
+                            'int': parseFloat,
+                            'boolean': function(x) { return x == 'true'; }}
         rawConstants.done(function(value) {
             var baseValues = JSON.parse(value);
             var actualConstants = {};
             _.each(baseValues['constants'], function(tuple) {
-                actualConstants[tuple.name] = tuple.value;
+                actualConstants[tuple.name] = typeDecoders[tuple.type](tuple.value);
             });
             gotConstants.push(actualConstants);
         });
@@ -30,6 +34,12 @@ Constants = (function() {
     });
 
     $(_.defer(reload));
+
+    $(document).keydown(function(x) {
+        if (x.which == 65) {
+            reload();
+        }
+    });
 
     return {'getAll': getAll,
             'get': get,
