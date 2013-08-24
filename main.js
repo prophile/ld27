@@ -12,7 +12,7 @@ $(function() {
         renderer.render(stage);
     };
 
-    document.body.appendChild(renderer.view);
+    $('#container').append(renderer.view);
 
     requestAnimFrame(animate);
 
