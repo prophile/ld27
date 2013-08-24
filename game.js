@@ -14,13 +14,8 @@ var Game = function() {
 
         function canvasSize() {
             var $window = $(window);
-            var width  = $window.width();
-            var height = $window.height();
-
-            var shortest = width < height ? width : height;
-            return shortest/Math.sqrt(2);
+            return Math.min($window.width(), $window.height()) / Math.sqrt(2);
         }
-
 
         this.setupCanvas = function() {
             renderer = PIXI.autoDetectRenderer(canvasSize(), canvasSize());
