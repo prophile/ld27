@@ -88,7 +88,6 @@ var Physics = function() {
             if (Math.abs(targetRotation - rotation) > turnRate) {
                 function sign(x) { return x ? x < 0 ? -1 : 1 : 0; }
                 direction = sign(targetRotation - rotation);
-                console.log(direction);
                 rotation += direction * turnRate;
                 that.world.SetGravity(newGravity());
             }
