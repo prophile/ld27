@@ -28,27 +28,37 @@ var Physics = function() {
         var turnRate = 0;
         var targetRotation = 0;
         var rotation = 0;
+        var gravity = 0.00001;
 
         Constants.get("world_rotation_rate", function(value) {
             turnRate = value;
         });
 
+
         var debugDraw = newDebugDraw();
 
         this.world = new b2World(newGravity(), false);
         this.world.SetDebugDraw(debugDraw);
+        Constants.get("world_gravity", function(value) {
+            gravity = value;
+            that.world.SetGravity(newGravity());
+        });
 
         newWorld();
 
         this.newBlock = function(stage) {
             var fd                 = new b2FixtureDef;
             fd.shape               = new b2PolygonShape();
+            fd.density = 1.0;
+            fd.friction = 0.3;
+            fd.restitution = 0.0;
+
             fd.shape.SetAsBox(1,1);
 
             var bodyDef                  = new b2BodyDef();
             bodyDef.type                 = b2Body.b2_dynamicBody;
-            bodyDef.position.x           = 150/PIXELS_PER_METER;
-            bodyDef.position.y           = 150/PIXELS_PER_METER;
+            bodyDef.position.x           = 300/PIXELS_PER_METER;
+            bodyDef.position.y           = 300/PIXELS_PER_METER;
             var body = that.world.CreateBody(bodyDef);
             body.CreateFixture(fd);
 
@@ -96,7 +106,7 @@ var Physics = function() {
 
         function newGravity() {
             var vector = rotate([0, PIXELS_PER_METER]);
-            return new b2Vec2(vector[0], vector[1]);
+            return new b2Vec2(gravity*vector[0], gravity*vector[1]);
         }
 
         function rotate(vec) {
