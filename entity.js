@@ -24,12 +24,32 @@ setInterval(function() {
 
 var FINISH = {"id": undefined};
 
+var RecursionTrap = function(limit) {
+    limit = (limit || 1);
+    var level = 0;
+
+    this.safely = function(f) {
+        level++;
+        try {
+            return f();
+        } finally {
+            level--;
+        }
+    }
+
+    this.check = function() {
+        if (level >= limit) {
+            throw "Recursion overflowed.";
+        }
+    }
+};
+
 var Entity = function(name) {
     name = (name === undefined) ? "Object" : name;
 
     var MAX_RECURSION_DEPTH = 100;
+    var recursionTrap = new RecursionTrap(MAX_RECURSION_DEPTH);
     var components = [];
-    var recursionTrap = 0;
 
     var wrapMessage = function(message) {
         if (typeof message === "string") {
@@ -39,28 +59,27 @@ var Entity = function(name) {
     }
 
     var target = function(message) {
-        if (recursionTrap > MAX_RECURSION_DEPTH) {
-            throw "Recursive message.";
-        }
+        recursionTrap.check();
         //console.log("Message for " + name + ":");
         //console.log(message);
         message = wrapMessage(message);
         if (message.id === "addComponent") {
-            recursionTrap++;
-            message.component.call(target, {id: "attach"});
-            recursionTrap--;
+            recursionTrap.safely(function() {
+                message.component.call(target, {id: "attach"});
+            });
             components.unshift(message.component);
             return FINISH;
         } else {
             var cLen = components.length;
             for (var i = 0; i < cLen; ++i) {
-                recursionTrap++;
-                var rv = components[i].call(target, message);
-                recursionTrap--;
+                var rv = recursionTrap.safely(function() {
+                    return components[i].call(target, message);
+                });
                 if (rv !== undefined) {
                     message = wrapMessage(rv);
                 }
             }
+            return rv;
         }
     };
 
