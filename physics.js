@@ -104,8 +104,8 @@ var Physics = function() {
         }
 
         function newGravity() {
-            var vector = rotate([0, PIXELS_PER_METER]);
-            return new b2Vec2(gravity*vector[0], gravity*vector[1]);
+            var vector = rotate([0, gravity*PIXELS_PER_METER]);
+            return new b2Vec2(vector[0], vector[1]);
         }
 
         function rotate(vec) {
