@@ -56,7 +56,7 @@ var Game = function() {
         }
 
         function spinIfNecessary() {
-            if (unixTime() - lastSpin > 1) {
+            if (unixTime() - lastSpin > 10) {
                 spin();
             }
         }

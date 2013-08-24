@@ -39,7 +39,7 @@ var Physics = function() {
         this.world.SetDebugDraw(debugDraw);
 
         newWorld();
-        newBall();
+        newBlock();
 
         this.draw = function() {
             that.world.DrawDebugData();
@@ -66,7 +66,7 @@ var Physics = function() {
         }
 
         function newGravity() {
-            var magnitude = PIXELS_PER_METER*0.0001;
+            var magnitude = PIXELS_PER_METER*1;
             var xComponent = magnitude * Math.sin(rotation *  (Math.PI/180));
             var yComponent = magnitude * Math.cos(rotation * (Math.PI/180));
             return new b2Vec2(xComponent, yComponent);
@@ -92,9 +92,10 @@ var Physics = function() {
             addWall(gameWidth, gameHeight/2, 3, 100000);
         }
 
-        function newBall() {
+        function newBlock() {
             var fd                 = new b2FixtureDef;
-            fd.shape               = new b2CircleShape(3);
+            fd.shape               = new b2PolygonShape();
+            fd.shape.SetAsBox(1,1);
 
             var bodyDef                  = new b2BodyDef();
             bodyDef.type                 = b2Body.b2_dynamicBody;
