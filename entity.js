@@ -21,8 +21,6 @@ setInterval(function() {
     World.all(function(x) { x("update") });
 }, 1000 * (1 / 60));
 
-var FINISH = {"id": undefined};
-
 var RecursionTrap = function(limit) {
     limit = (limit || 1);
     var level = 0;
@@ -51,7 +49,9 @@ var Entity = function(name) {
     var components = [];
 
     var wrapMessage = function(message) {
-        if (typeof message === "string") {
+        if (message === false || message === null) {
+            message = {"id": undefined};
+        } else if (typeof message === "string") {
             message = {"id": message};
         }
         return message;
@@ -67,7 +67,7 @@ var Entity = function(name) {
                 message.component.call(target, {id: "attach"});
             });
             components.unshift(message.component);
-            return FINISH;
+            return wrapMessage(null);
         } else {
             var cLen = components.length;
             for (var i = 0; i < cLen; ++i) {
