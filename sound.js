@@ -43,3 +43,4 @@ var Sound = (function() {
     return {'playMusic': playMusic,
             'stopMusic': stopMusic};
 }());
+
