@@ -95,10 +95,15 @@ var Physics = function() {
         }
 
         function newGravity() {
-            var magnitude = PIXELS_PER_METER*1;
-            var xComponent = magnitude * Math.sin(rotation *  (Math.PI/180));
-            var yComponent = magnitude * Math.cos(rotation * (Math.PI/180));
-            return new b2Vec2(xComponent, yComponent);
+            var vector = rotate([0, PIXELS_PER_METER]);
+            return new b2Vec2(vector[0], vector[1]);
+        }
+
+        function rotate(vec) {
+            var sine   = Math.sin(rotation * (Math.PI/180));
+            var cosine = Math.cos(rotation * (Math.PI/180));
+            return [vec[0] * cosine + vec[1] * sine,
+                    vec[0] * -sine + vec[1] * cosine];
         }
 
         function addWall(x, y, width, height) {
@@ -121,5 +126,6 @@ var Physics = function() {
             addWall(gameWidth, gameHeight/2, 3, 100000);
         }
 
+        this.rotate = rotate;
     }
 }();
