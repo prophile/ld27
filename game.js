@@ -14,7 +14,7 @@ var Game = function() {
             context = document.getElementById("sup").getContext("2d");
             $("#sup").css({
                 "z-index":100000,
-                "position":"absolute",
+                "position":"absolute"
             })
             $('#container').append(renderer.view);
             $("#container").css({
