@@ -1,5 +1,5 @@
 LIBRARIES=howler.min.js pixi.js underscore-min.js Bacon.min.js
-SOURCES=constants.js entity.js main.js game.js
+SOURCES=constants.js entity.js main.js physics.js game.js
 CC_FLAGS=--compilation_level WHITESPACE_ONLY
 
 all: deps ld.js
