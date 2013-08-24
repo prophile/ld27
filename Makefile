@@ -1,8 +1,9 @@
-LIBRARIES=howler.js pixi.js underscore-min.js
+LIBRARIES=howler.min.js pixi.js underscore-min.js
 
 all:
-	wget 'https://github.com/goldfire/howler.js'
-	wget 'https://github.com/GoodBoyDigital/pixi.js'
+	rm -f $(LIBRARIES) libraries.js
+	wget 'https://raw.github.com/goldfire/howler.js/master/howler.min.js'
+	wget 'https://raw.github.com/GoodBoyDigital/pixi.js/master/bin/pixi.js'
 	wget 'http://underscorejs.org/underscore-min.js'
 	cat $(LIBRARIES) > libraries.js
 
