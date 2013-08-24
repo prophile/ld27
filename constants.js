@@ -24,9 +24,14 @@ Constants = (function() {
         });
     };
 
-    var get = function(key, callback) {
-        var newStream = constants.map(function(x) { return x[key]; }).skipDuplicates();
-        newStream.onValue(callback);
+    var get = function(keys, callback) {
+        if (typeof keys === "string") {
+            keys = [keys];
+        }
+        var newStream = constants.map(function(x) {
+            return _.map(keys, function(y) { return x[y]; });
+        }).skipDuplicates(_.isEqual);
+        newStream.onValues(callback);
     };
 
     constants.onValue(function() {
