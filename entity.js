@@ -22,6 +22,8 @@ setInterval(function() {
     World.all(function(x) { x("update") });
 }, 1000 * (1 / 30));
 
+var FINISH = {"id": undefined};
+
 var Entity = function(name) {
     name = (name === undefined) ? "Object" : name;
 
@@ -29,23 +31,26 @@ var Entity = function(name) {
     var components = [];
     var recursionTrap = 0;
 
+    var wrapMessage = function(message) {
+        if (typeof message === "string") {
+            message = {"id": message};
+        }
+        return message;
+    }
+
     var target = function(message) {
         if (recursionTrap > MAX_RECURSION_DEPTH) {
             throw "Recursive message.";
         }
         //console.log("Message for " + name + ":");
         //console.log(message);
-        if (typeof message === "string") {
-            message = {"id": message};
-        }
+        message = wrapMessage(message);
         if (message.id === "addComponent") {
             recursionTrap++;
             message.component.call(target, {id: "attach"});
             recursionTrap--;
-            components.push(message.component);
-            return true;
-        } else if (message.id === "getName") {
-            return name;
+            components.unshift(message.component);
+            return FINISH;
         } else {
             var cLen = components.length;
             for (var i = 0; i < cLen; ++i) {
@@ -53,7 +58,7 @@ var Entity = function(name) {
                 var rv = components[i].call(target, message);
                 recursionTrap--;
                 if (rv !== undefined) {
-                    return rv;
+                    message = wrapMessage(rv);
                 }
             }
         }
