@@ -1,5 +1,5 @@
 LIBRARIES=howler.min.js pixi.js underscore-min.js Bacon.min.js
-SOURCES=constants.js main.js
+SOURCES=constants.js main.js game.js
 
 all: deps ld.js
 
