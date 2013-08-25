@@ -125,8 +125,9 @@ var Game = function() {
 
         function spin() {
             lastSpin = unixTime();
-            physics.setTargetRotation(Math.random()*720);
-            rotateCanvas(physics.getRotation());
+            Constants.get("maximum_rotation", function(value) {
+                physics.setTargetRotation(Math.random()*value);
+            });
         }
 
         this.render = function() {
