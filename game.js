@@ -1,5 +1,5 @@
 var Game = function() {
-    return function() {
+    return function(size) {
         function unixTime() {
             return new Date().getTime() / 1000;
         }
@@ -15,7 +15,11 @@ var Game = function() {
         var renderer = null;
         var physics  = null;
         var context  = null;
+
+        gameWidth = size;
+        gameHeight = size;
         var stage    = null;
+        var container = null;
         var titleStage = null;
 
         function canvasSize() {
@@ -39,7 +43,7 @@ var Game = function() {
         };
 
         this.setupGame = function() {
-            physics = new Physics(context, canvasSize(), canvasSize());
+            physics = new Physics(context, gameWidth, gameHeight);
             pixiSetup();
             soundSetup();
         };
@@ -108,7 +112,7 @@ var Game = function() {
                 lastSpawn = unixTime();
                 var block_count = 0;
                 var timer = setInterval(function() {
-                    physics.newBlock("block", stage);
+                    physics.newBlock("block", container);
                     block_count++;
                     if (block_count == blocksToSpawn) {
                         clearInterval(timer);
@@ -124,7 +128,10 @@ var Game = function() {
         }
 
         this.render = function() {
-            physics.draw();
+            physics.draw(canvasSize()/gameWidth);
+            container.scale.x = canvasSize()/gameWidth;
+            container.scale.y = canvasSize()/gameWidth;
+            //console.log(stage.scale);
             renderer.render(stage);
         };
 
@@ -133,16 +140,18 @@ var Game = function() {
 
         function pixiSetup() {
             stage = new PIXI.Stage(0x66FF99);
-            stage.position.x = canvasSize()/2;
-            stage.position.y = canvasSize()/2;
+            container = new PIXI.DisplayObjectContainer();
+            stage.position.x = gameWidth/2;
+            stage.position.y = gameHeight/2;
+            stage.addChild(container);
             requestAnimFrame(that.step);
 
             titleStage = new PIXI.Stage(0xFFFF00);
             var text = new PIXI.Text("lol title screen", {font:"50px Arial", fill:"red"});
             titleStage.addChild(text);
 
-            physics.newBlock("player", stage, true);
-            physics.newGoal(canvasSize());
+            physics.newBlock("player", container, true);
+            physics.newGoal(gameWidth);
         }
 
         function soundSetup() {

@@ -6,10 +6,12 @@ jQuery.fn.rotate = function(degrees) {
 };
 
 $(function() {
-    var game = new Game();
-    game.setupCanvas();
-    game.setupGame();
+    Constants.get("game_size", function(value) {
+        var game = new Game(value);
+        game.setupCanvas();
+        game.setupGame();
 
-    Input.press("reloadConstants", Constants.reload);
+        Input.press("reloadConstants", Constants.reload);
+    });
 });
 

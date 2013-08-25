@@ -1,10 +1,11 @@
 var Physics = function() {
     PIXELS_PER_METER = 16;
     return function(context, gameWidth, gameHeight) {
+        var that = this;
         function newDebugDraw() {
             var debugDraw = new b2DebugDraw();
             debugDraw.SetSprite(document.getElementById("sup").getContext("2d"));
-            debugDraw.SetDrawScale(PIXELS_PER_METER);
+            debugDraw.SetDrawScale(PIXELS_PER_METER*that.debugScale);
             debugDraw.SetFillAlpha(0.5);
             debugDraw.SetLineThickness(1.0);
             debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
@@ -29,7 +30,6 @@ var Physics = function() {
         b2Settings.b2_maxTranslation = 10000.0;
         b2Settings.b2_maxTranslationSquared = 10000.0*10000.0;
 
-        var that = this;
         var turnRate = 0;
         var targetRotation = 0;
         var rotation = 0;
@@ -44,7 +44,6 @@ var Physics = function() {
 
         this.world = new b2World(newGravity(), false);
         this.world.UserData = this;
-        this.world.SetDebugDraw(debugDraw);
         Constants.get("world_gravity", function(value) {
             gravity = value;
             that.world.SetGravity(newGravity());
@@ -120,7 +119,9 @@ var Physics = function() {
             });
         };
 
-        this.draw = function() {
+        this.draw = function(scaleFactor) {
+            that.debugScale = scaleFactor;
+            that.world.SetDebugDraw(newDebugDraw());
             that.world.DrawDebugData();
         };
 
@@ -195,10 +196,10 @@ var Physics = function() {
             addWall(0, gameHeight/2, 3, 100000, 0, 0, 0);
             addWall(gameWidth, gameHeight/2, 3, 100000, 0, 0, 0);
             //addWall(gameWidth, gameHeight/2, 100000, 3, 45, 3, 3);
-            addWall(gameWidth+100, gameHeight/2, 100000, 3, 45, 0, 0);
-            addWall(-100, gameHeight/2, 100000, 3, 45, 0, 0);
-            addWall(gameWidth/2, -100, 10000, 3, -45, 0, 0);
-            addWall(gameWidth/2, gameHeight+100, 10000, 3, -45, 0, 0);
+            addWall(gameWidth+gameWidth*0.25, gameHeight/2, 100000, 3, 45, 0, 0);
+            addWall(-gameWidth*0.25, gameHeight/2, 100000, 3, 45, 0, 0);
+            addWall(gameWidth/2, -gameHeight*0.25, 10000, 3, -45, 0, 0);
+            addWall(gameWidth/2, gameHeight+gameHeight*0.25, 10000, 3, -45, 0, 0);
             var myContactListener = {
                 "BeginContact" : function(contact) {
                     var data1 = contact.GetFixtureA().GetBody().GetUserData()
