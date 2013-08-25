@@ -112,6 +112,9 @@ var Physics = function() {
                 bodyDef.position.x           = 300/PIXELS_PER_METER;
                 bodyDef.position.y           = 300/PIXELS_PER_METER;
                 bodyDef.allowSleep           = false;
+                if (controllable) {
+                    bodyDef.fixedRotation = true;
+                }
                 var body = that.world.CreateBody(bodyDef);
                 var fix = body.CreateFixture(fd);
                 setPhysicalProperties(cls, fix);
