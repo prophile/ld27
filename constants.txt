@@ -36,4 +36,6 @@ target_cheeses        -- required number of cheeses to win the game
 goal_width            -- width of the goal, in metres
 goal_height           -- height of the goal, in metres
 debug_physics         -- display all hitboxes
-
+bad_block_image       -- image for a bad block
+bad_block_scale       -- scale for a bad block
+bad_block_prob        -- probability a bad block spawns 0 < x < 1

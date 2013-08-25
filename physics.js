@@ -96,7 +96,6 @@ var Physics = function() {
             fd.friction = 0.3;
             fd.restitution = 0.1;
 
-            var killsYou = Math.random() < 0.25;
 
             fd.shape.SetAsBox(1,1);
 
@@ -123,37 +122,40 @@ var Physics = function() {
 
                 e.addComponent(SpriteComponent(stage, beeSprite));
                 e.addComponent(PhysicsComponent(body));
-                if (controllable) {
-                    body.SetUserData({tag: "PLAYER", entity:e});
-                    e.addComponent(MovableComponent());
-                    Constants.get("movement_speed", function(x) {
-                        e({id: "setMovementSpeed", speed: x});
-                    });
-                    Constants.get("movement_vertical", function(x) {
-                        e({id: "setVerticalSpeed", speed: x});
-                    });
-                    e.addComponent(GrabberComponent());
-                    World.add(e);
-                } else if(killsYou) {
-                    Constants.get(["block_bad_image", "block_bad_scale"], function(image, scale) {
-                        var beeTexture = PIXI.Texture.fromImage(image, true);
-                        var beeSprite = new PIXI.Sprite(beeTexture);
-                        var e = new Entity();
-
-                        beeSprite.anchor.x = 0.5;
-                        beeSprite.anchor.y = 0.5;
-
-                        beeSprite.scale.x = scale;
-                        beeSprite.scale.y = scale;
-
-                        e.addComponent(SpriteComponent(stage, beeSprite));
-                        e.addComponent(PhysicsComponent(body));
-                        body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":true});
+                Constants.get("bad_block_prob"), function(value) {
+                    var killsYou = Math.random() < value;
+                    if (controllable) {
+                        body.SetUserData({tag: "PLAYER", entity:e});
+                        e.addComponent(MovableComponent());
+                        Constants.get("movement_speed", function(x) {
+                            e({id: "setMovementSpeed", speed: x});
+                        });
+                        Constants.get("movement_vertical", function(x) {
+                            e({id: "setVerticalSpeed", speed: x});
+                        });
+                        e.addComponent(GrabberComponent());
                         World.add(e);
-                    });
-                } else {
-                    World.add(e);
-                }
+                    } else if(killsYou) {
+                        Constants.get(["block_bad_image", "block_bad_scale", "block_bad_prob"], function(image, scale) {
+                            var beeTexture = PIXI.Texture.fromImage(image, true);
+                            var beeSprite = new PIXI.Sprite(beeTexture);
+                            var e = new Entity();
+
+                            beeSprite.anchor.x = 0.5;
+                            beeSprite.anchor.y = 0.5;
+
+                            beeSprite.scale.x = scale;
+                            beeSprite.scale.y = scale;
+
+                            e.addComponent(SpriteComponent(stage, beeSprite));
+                            e.addComponent(PhysicsComponent(body));
+                            body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":true});
+                            World.add(e);
+                        });
+                    } else {
+                        World.add(e);
+                    }
+                });
             });
         };
 
