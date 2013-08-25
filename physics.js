@@ -91,7 +91,7 @@ var Physics = function() {
             setPhysicalProperties(cls, fix);
 
             var e = new Entity();
-            body.SetUserData({tag: "BLOCK", entity:e});
+            body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime()});
             Constants.get([cls + "_image", cls + "_scale"], function(value, scale) {
                 var beeTexture = PIXI.Texture.fromImage(value, true);
                 var beeSprite = new PIXI.Sprite(beeTexture);
@@ -206,10 +206,14 @@ var Physics = function() {
                         var data2 = contact.GetFixtureB().GetBody().GetUserData()
                         if (data1 && data2) {
                             if (data1.tag == "GOAL" && data2.tag == "BLOCK") {
-                                that.toRemove.push(contact.GetFixtureB().GetBody());
+                                if (unixTime() - data2.spawnTime > 5) {
+                                    that.toRemove.push(contact.GetFixtureB().GetBody());
+                                }
                             }
                             if (data2.tag == "GOAL" && data1.tag == "BLOCK") {
-                                that.toRemove.push(contact.GetFixtureA().GetBody());
+                                if (unixTime() - data1.spawnTime > 5) {
+                                    that.toRemove.push(contact.GetFixtureA().GetBody());
+                                }
                             }
                         }
                 },

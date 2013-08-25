@@ -1,3 +1,6 @@
+function unixTime() {
+    return new Date().getTime() / 1000;
+}
 Constants = (function() {
     var CONSTANTS_URIS = [
         'http://constantine.teaisaweso.me/json',

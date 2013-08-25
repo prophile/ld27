@@ -1,8 +1,5 @@
 var Game = function() {
     return function(size) {
-        function unixTime() {
-            return new Date().getTime() / 1000;
-        }
 
         var that      = this;
         var lastSpin  = unixTime();
