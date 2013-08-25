@@ -35,4 +35,5 @@ lift_damping          -- damping ratio for the picked up object joint (1 = criti
 target_cheeses        -- required number of cheeses to win the game
 goal_width            -- width of the goal, in metres
 goal_height           -- height of the goal, in metres
+debug_physics         -- display all hitboxes
 
