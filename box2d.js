@@ -6735,7 +6735,7 @@ Box2D.postDefs = [];
       var tManifold = this.m_oldManifold;
       this.m_oldManifold = this.m_manifold;
       this.m_manifold = tManifold;
-      this.m_flags |= b2Contact.e_enabledFlag;
+      //this.m_flags |= b2Contact.e_enabledFlag;
       var touching = false;
       var wasTouching = (this.m_flags & b2Contact.e_touchingFlag) == b2Contact.e_touchingFlag;
       var bodyA = this.m_fixtureA.m_body;
