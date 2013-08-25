@@ -104,11 +104,20 @@ var Physics = function() {
 
                 fd.shape.SetAsBox(1,1);
 
-                Constants.get([cls + "_image", cls + "_scale", cls + '_flags'], function(value, scale, flags) {
+                Constants.get([cls + "_image", cls + "_scale", cls + '_flags', "game_size"], function(value, scale, flags, size) {
                     var bodyDef                  = new b2BodyDef();
                     bodyDef.type                 = b2Body.b2_dynamicBody;
-                    bodyDef.position.x           = 300/PIXELS_PER_METER;
-                    bodyDef.position.y           = 300/PIXELS_PER_METER;
+                    var radius = 40;
+                    var gravVec = newGravity()
+                    gravVec.NegativeSelf();
+                    gravVec.Normalize();
+                    gravVec.Multiply(radius);
+
+                    var x = size/2+gravVec.x;
+                    var y = size/2+gravVec.y;
+
+                    bodyDef.position.x           = x/PIXELS_PER_METER;
+                    bodyDef.position.y           = y/PIXELS_PER_METER;
                     bodyDef.allowSleep           = false;
                     if (/f/.exec(flags)) {
                         bodyDef.fixedRotation = true;
