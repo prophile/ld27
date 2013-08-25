@@ -113,8 +113,8 @@ var Physics = function() {
                     gravVec.Normalize();
                     gravVec.Multiply(radius);
 
-                    var x = size/2+gravVec.x+Math.random()*randomness;
-                    var y = size/2+gravVec.y+Math.random()*randomness;
+                    var x = size/2+gravVec.x+Math.random()*randomness-randomness/2;
+                    var y = size/2+gravVec.y+Math.random()*randomness-randomness/2;
 
                     bodyDef.position.x           = x/PIXELS_PER_METER;
                     bodyDef.position.y           = y/PIXELS_PER_METER;
