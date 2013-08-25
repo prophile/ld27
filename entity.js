@@ -203,9 +203,11 @@ var GrabberComponent = function() {
             }
         }
         if (message.id === "attachLift") {
-            attached = message.attached;
-            this({id: "addWeldJoint",
-                  to: attached});
+            if (attached === null) {
+                attached = message.attached;
+                this({id: "addWeldJoint",
+                      to: attached});
+            }
         }
     };
 };
