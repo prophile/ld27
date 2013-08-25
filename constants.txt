@@ -22,4 +22,12 @@ player_image          -- image URI for the player
 player_scale          -- image scale for the player
 physics_velocityIterations -- accuracy of physics for velocity
 physics_positionIterations -- accuracy of physics for position
+block_restitution     -- restitution (bounciness) of blocks, 0 < x < 1
+block_friction        -- friction coefficient of blocks, 0 < x < 1
+block_density         -- density of blocks, in kg/m^2
+player_restitution    -- restitution (bounciness) of the player, 0 < x < 1
+player_friction       -- friction coefficient of the player, 0 < x < 1
+player_density        -- density of the player, in kg/m^2
+wall_friction         -- friction coefficent of the wall, 0 < x < 1
+wall_restitution      -- restitution (bounciness) of the wall, 0 < x < 1
 
