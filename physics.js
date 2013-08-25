@@ -227,6 +227,24 @@ var Physics = function() {
                    vec[0] * -sine + vec[1] * cosine];
         }
 
+        function newPlatform(x, y, width, height, orientation) {
+            var platformDef         = new b2FixtureDef;
+            platformDef.shape       = new b2PolygonShape();
+            platformDef.friction    = 0.2;
+            platformDef.restitution = 0.7;
+            platformDef.shape.SetAsOrientedBox(width/2, height/2, new b2Vec2(0, 0), rotation * Math.PI/180);
+
+            var platformBodyDef    = new b2BodyDef();
+            platformBodyDef.type   = b2Body.b2_staticBody;
+            platformBodyDef.position.x = x/PIXELS_PER_METER;
+            platformBodyDef.position.y = y/PIXELS_PER_METER;
+            var body = that.world.CreateBody(platformBodyDef);
+            body.SetUserData({'tag': 'PLATFORM'});
+
+            var fix = body.CreateFixture(platformDef);
+            setPhysicalProperties('platform', fix, true);
+        }
+
         function addWall(x, y, width, height, rotation, offset1, offset2) {
             //floor
             var floorDef                 = new b2FixtureDef;
@@ -241,7 +259,7 @@ var Physics = function() {
             floorBodyDef.position.y           = y/PIXELS_PER_METER;
             var body = that.world.CreateBody(floorBodyDef)
             body.SetUserData({'tag': 'WALL'});
-                var fix = body.CreateFixture(floorDef);
+            var fix = body.CreateFixture(floorDef);
             setPhysicalProperties('wall', fix, true);
         }
 
@@ -255,6 +273,12 @@ var Physics = function() {
             addWall(-gameWidth*0.25, gameHeight/2, 100000, 3, 45, 0, 0);
             addWall(gameWidth/2, -gameHeight*0.25, 10000, 3, -45, 0, 0);
             addWall(gameWidth/2, gameHeight+gameHeight*0.25, 10000, 3, -45, 0, 0);
+            var platThickness = 0.7;
+            var platLength = 5;
+            newPlatform((1/2)*gameWidth, (2/7)*gameHeight, platLength, platThickness, 90);
+            newPlatform((1/2)*gameWidth, (5/7)*gameHeight, platLength, platThickness, 270);
+            newPlatform((2/7)*gameWidth, (1/2)*gameHeight, platThickness, platLength, 0);
+            newPlatform((5/7)*gameWidth, (1/2)*gameHeight, platThickness, platLength, 180);
             var myContactListener = {
                 "BeginContact" : function(contact) {
                     var data1 = contact.GetFixtureA().GetBody().GetUserData();
