@@ -49,6 +49,25 @@ var Physics = function() {
             that.world.SetGravity(newGravity());
         });
 
+        var setPhysicalProperties = function(cls, fix, massless) {
+            if (massless === undefined) {
+                massless = false;
+            }
+            Constants.get([cls + '_friction',
+                           cls + '_restitution'],
+                           function(fric, rest) {
+                fix.SetFriction(fric);
+                fix.SetRestitution(rest);
+                console.log("New PP", cls, fric, rest);
+            });
+            if (!massless) {
+                Constants.get(cls + '_density',
+                              function(density) {
+                    fix.SetDensity(density);
+                });
+            }
+        };
+
         newWorld();
 
         this.newBlock = function(cls, stage, controllable) {
@@ -69,7 +88,8 @@ var Physics = function() {
             bodyDef.position.y           = 300/PIXELS_PER_METER;
             bodyDef.allowSleep           = false;
             var body = that.world.CreateBody(bodyDef);
-            body.CreateFixture(fd);
+            var fix = body.CreateFixture(fd);
+            setPhysicalProperties(cls, fix);
 
             var e = new Entity();
             body.SetUserData({tag: "BLOCK", entity:e});
@@ -165,7 +185,9 @@ var Physics = function() {
             floorBodyDef.type                 = b2Body.b2_staticBody;
             floorBodyDef.position.x           = x/PIXELS_PER_METER;
             floorBodyDef.position.y           = y/PIXELS_PER_METER;
-            that.world.CreateBody(floorBodyDef).CreateFixture(floorDef);
+            var body = that.world.CreateBody(floorBodyDef)
+            var fix = body.CreateFixture(floorDef);
+            setPhysicalProperties('wall', fix, true);
         }
 
         function newWorld() {
