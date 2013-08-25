@@ -190,6 +190,7 @@ var Physics = function() {
                 that.world.SetGravity(newGravity());
             } else {
                 if (!doneRotating) {
+                    rotation = targetRotation;
                     callback();
                     console.log("done rotating");
                     doneRotating = true;

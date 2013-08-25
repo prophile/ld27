@@ -125,8 +125,17 @@ var Game = function() {
 
         function spin() {
             lastSpin = unixTime();
-            Constants.get("maximum_rotation", function(value) {
-                physics.setTargetRotation(Math.random()*value);
+            Constants.get(["minimum_rotation", "maximum_rotation"], function(min, max) {
+                var direction = Math.ceil(Math.random());
+                if (direction == 0) {
+                    direction = -1;
+                }
+
+                var range = max - min;
+                var angle = min + Math.random() * range;
+                console.log(angle);
+                console.log(range);
+                physics.setTargetRotation(angle + physics.getRotation());
             });
         }
 
