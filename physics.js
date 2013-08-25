@@ -102,11 +102,14 @@ var Physics = function() {
                     cls = "block_bad";
                 }
 
-                fd.shape.SetAsBox(1,1);
 
-                Constants.get([cls + "_image", cls + "_scale", cls + '_flags', "game_size", "mousehole_spawn_distance", "spawn_randomness"], function(value, scale, flags, size, dist, randomness) {
+                Constants.get([cls + "_image", cls + "_scale", cls + '_flags', "game_size", "mousehole_spawn_distance", "spawn_randomness"],
+                  function(value, scale, flags, size, dist, randomness) {
                     var bodyDef                  = new b2BodyDef();
                     bodyDef.type                 = b2Body.b2_dynamicBody;
+                    if (/c/.exec(flags)) {
+                        fd.shape.SetAsBox(1, 2.5);
+                    }
                     var radius = dist;
                     var gravVec = newGravity()
                     gravVec.NegativeSelf();
@@ -131,7 +134,9 @@ var Physics = function() {
                     var beeTexture = PIXI.Texture.fromImage(value, true);
                     var beeSprite = new PIXI.Sprite(beeTexture);
 
-                    beeSprite.anchor.x = 0.5;
+                    if (/c/.exec(flags)) {
+                        beeSprite.anchor.x = 0.42;
+                    }
                     beeSprite.anchor.y = 0.5;
 
                     beeSprite.scale.x = scale;
