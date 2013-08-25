@@ -99,17 +99,17 @@ var PhysicsComponent = function(body) {
                   x: position.x * PIXELS_PER_METER,
                   y: position.y * PIXELS_PER_METER});
             this({id:"absRotation",
-                  value: body.GetTransform().rotation * 180/Math.PI});
+                  value: body.GetAngle() * 180/Math.PI});
         }
     };
 };
 
 var MovableComponent = function() {
     var movement = [0, 0];
+    var speed = 0.0;
+    var verticalSpeed = 0.0;
     return function(message) {
-        if (message.id == "attach") {
-            var that = this;
-            var speed = 1;
+        if (message.id === "attach") {
             var up = false, down = false, left = false, right = false;
             var recompute = function() {
                 var x = 0, y = 0;
@@ -121,18 +121,26 @@ var MovableComponent = function() {
                     x -= 1;
                 if (right)
                     x += 1;
-                movement = [x*speed, y*speed];
-                console.log(movement);
+                movement[0] = x * speed;
+                movement[1] = y * verticalSpeed;
             };
             Input.hold('move_up', function(x) { up = x; recompute(); });
             Input.hold('move_down', function(x) { down = x; recompute(); });
             Input.hold('move_left', function(x) { left = x; recompute(); });
             Input.hold('move_right', function(x) { right = x; recompute(); });
         }
-        if (message.id == "updatePhysics") {
+        if (message.id === "setMovementSpeed") {
+            speed = message.speed;
+        }
+        if (message.id === "setVerticalSpeed") {
+            verticalSpeed = message.speed;
+        }
+        if (message.id === "updatePhysics") {
+            phys = message.body.GetWorld().UserData;
+            rotated = phys.rotate(movement);
             b2Vec2 = Box2D.Common.Math.b2Vec2;
-            message.body.ApplyForce(new b2Vec2(movement[0], movement[1]),
-                                    message.body.GetTransform().position);
+            message.body.ApplyForce(new b2Vec2(rotated[0], rotated[1]),
+                                    message.body.GetWorldCenter());
             //message.body.SetLinearVelocity(new b2Vec2(movement[0], movement[1]))
         }
     };
@@ -149,6 +157,11 @@ var SpriteComponent = function(stage, sprite) {
         }
         if (message.id === "delete") {
             stage.removeChild(sprite);
+        }
+
+        if (message.id === "absRotation") {
+            console.log(message.value);
+            sprite.rotation = message.value * Math.PI/180;
         }
     };
 };

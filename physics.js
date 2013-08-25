@@ -36,6 +36,7 @@ var Physics = function() {
         var debugDraw = newDebugDraw();
 
         this.world = new b2World(newGravity(), false);
+        this.world.UserData = this;
         this.world.SetDebugDraw(debugDraw);
         Constants.get("world_gravity", function(value) {
             gravity = value;
@@ -49,7 +50,7 @@ var Physics = function() {
             fd.shape               = new b2PolygonShape();
             fd.density = 1.0;
             fd.friction = 0.3;
-            fd.restitution = 0.0;
+            fd.restitution = 0.1;
 
             fd.shape.SetAsBox(1,1);
 
@@ -62,6 +63,8 @@ var Physics = function() {
 
             var e = new Entity();
             Constants.get(["block_image", "block_scale"], function(value, scale) {
+                console.log("value");
+                console.log(value);
                 var beeTexture = PIXI.Texture.fromImage(value, true);
                 var beeSprite = new PIXI.Sprite(beeTexture);
 
@@ -74,6 +77,12 @@ var Physics = function() {
                 e.addComponent(SpriteComponent(stage, beeSprite));
                 e.addComponent(PhysicsComponent(body));
                 e.addComponent(MovableComponent());
+                Constants.get("movement_speed", function(x) {
+                    e({id: "setMovementSpeed", speed: x});
+                });
+                Constants.get("movement_vertical", function(x) {
+                    e({id: "setVerticalSpeed", speed: x});
+                });
                 console.log("here");
                 World.add(e);
             });
@@ -91,7 +100,8 @@ var Physics = function() {
                 that.world.SetGravity(newGravity());
             }
 
-            that.world.Step(3,3);
+            that.world.Step(10, 10);
+            that.world.ClearForces();
         };
 
         this.getRotation = function() {
@@ -118,6 +128,8 @@ var Physics = function() {
             //floor
             var floorDef                 = new b2FixtureDef;
             floorDef.shape               = new b2PolygonShape();
+            floorDef.friction            = 0.2;
+            floorDef.restitution         = 0.7;
             floorDef.shape.SetAsOrientedBox(width/2, height/2, new b2Vec2(offset1, offset2), rotation * Math.PI/180);
 
             var floorBodyDef                  = new b2BodyDef();
