@@ -22,6 +22,8 @@ var Physics = function() {
         var b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
         var b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
         var b2Settings = Box2D.Common.b2Settings;
+        this.toRemove = [];
+
 
         b2Settings.b2_maxTranslation = 10000.0;
         b2Settings.b2_maxTranslationSquared = 10000.0*10000.0;
@@ -70,6 +72,7 @@ var Physics = function() {
             body.CreateFixture(fd);
 
             var e = new Entity();
+            body.SetUserData({tag: "BLOCK", entity:e});
             Constants.get([cls + "_image", cls + "_scale"], function(value, scale) {
                 console.log("value");
                 console.log(value);
@@ -85,6 +88,7 @@ var Physics = function() {
                 e.addComponent(SpriteComponent(stage, beeSprite));
                 e.addComponent(PhysicsComponent(body));
                 if (controllable) {
+                    body.SetUserData({tag: "PLAYER", entity:e});
                     e.addComponent(MovableComponent());
                     Constants.get("movement_speed", function(x) {
                         e({id: "setMovementSpeed", speed: x});
@@ -105,11 +109,11 @@ var Physics = function() {
         var velocityIterations = 12, positionIterations = 12;
 
         Constants.get(["physics_velocityIterations",
-                       "physics_positionIterations"],
-                       function(x, y) {
-                           velocityIterations = x;
-                           positionIterations = y;
-                       });
+                "physics_positionIterations"],
+                function(x, y) {
+                    velocityIterations = x;
+                    positionIterations = y;
+                });
 
         this.update = function() {
             if (Math.abs(targetRotation - rotation) > turnRate) {
@@ -119,7 +123,13 @@ var Physics = function() {
                 that.world.SetGravity(newGravity());
             }
 
+            that.toRemove = [];
             that.world.Step(1/60, velocityIterations, positionIterations);
+            for (var i = 0; i < that.toRemove.length; i++) {
+                var body = that.toRemove[i];
+                that.world.DestroyBody(body);
+                World.del(body.GetUserData().entity);
+            }
             that.world.ClearForces();
         };
 
@@ -140,7 +150,7 @@ var Physics = function() {
             var sine   = Math.sin(rotation * (Math.PI/180));
             var cosine = Math.cos(rotation * (Math.PI/180));
             return [vec[0] * cosine + vec[1] * sine,
-                    vec[0] * -sine + vec[1] * cosine];
+                   vec[0] * -sine + vec[1] * cosine];
         }
 
         function addWall(x, y, width, height, rotation, offset1, offset2) {
@@ -168,20 +178,27 @@ var Physics = function() {
             addWall(-100, gameHeight/2, 100000, 3, 45, 0, 0);
             addWall(gameWidth/2, -100, 10000, 3, -45, 0, 0);
             addWall(gameWidth/2, gameHeight+100, 10000, 3, -45, 0, 0);
-            var myContactListener = function() {
-                return {
-                    "BeginContact" : function() {
-                        console.log("lol");
-                    },
-                    "EndContact" : function() {
-                    },
-                    "PreSolve" : function() {
-                    },
-                    "PostSolve" : function() {
-                    }
+            var myContactListener = {
+                "BeginContact" : function(contact) {
+                    var data1 = contact.GetFixtureA().GetBody().GetUserData()
+                        var data2 = contact.GetFixtureB().GetBody().GetUserData()
+                        if (data1 && data2) {
+                            if (data1.tag == "GOAL" && data2.tag == "BLOCK") {
+                                that.toRemove.push(contact.GetFixtureB().GetBody());
+                            }
+                            if (data2.tag == "GOAL" && data1.tag == "BLOCK") {
+                                that.toRemove.push(contact.GetFixtureA().GetBody());
+                            }
+                        }
+                },
+                "EndContact" : function() {
+                },
+                "PreSolve" : function() {
+                },
+                "PostSolve" : function() {
                 }
             };
-            that.world.SetContactListener(myContactListener());
+            that.world.SetContactListener(myContactListener);
         }
 
         this.newGoal = function(gameSize) {
@@ -192,13 +209,16 @@ var Physics = function() {
                 floorDef.IsSensor            = true;
                 floorDef.friction            = 0.2;
                 floorDef.restitution         = 0.7;
-                floorDef.shape.SetAsOrientedBox(width/2, height/2);
+                floorDef.shape.SetAsBox(width/2, height/2);
 
                 var floorBodyDef                  = new b2BodyDef();
                 floorBodyDef.type                 = b2Body.b2_staticBody;
                 floorBodyDef.position.x           = gameSize*0.5/PIXELS_PER_METER;
                 floorBodyDef.position.y           = gameSize*0.5/PIXELS_PER_METER;
-                that.world.CreateBody(floorBodyDef).CreateFixture(floorDef);
+                var body = that.world.CreateBody(floorBodyDef);
+
+                body.SetUserData({tag: "GOAL"});
+                body.CreateFixture(floorDef);
             });
         }
 

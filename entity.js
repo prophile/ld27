@@ -18,7 +18,7 @@ var World = (function() {
         _.each(objects, callback);
     };
 
-    return {"add": add, "delete": del, "all": all};
+    return {"add": add, "del": del, "all": all};
 }());
 
 setInterval(function() {
@@ -168,6 +168,7 @@ var SpriteComponent = function(stage, sprite) {
             sprite.rotation += message.amount;
         }
         if (message.id === "delete") {
+            console.log("got delete");
             stage.removeChild(sprite);
         }
 
