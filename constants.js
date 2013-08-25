@@ -12,7 +12,7 @@ Constants = (function() {
         var rawConstants = $.get(CONSTANTS_URI);
         var typeDecoders = {'string': function(x) { return x; },
                             'float': parseFloat,
-                            'int': parseFloat,
+                            'integer': parseFloat,
                             'boolean': function(x) { return x; }};
         rawConstants.done(function(value) {
             var baseValues = JSON.parse(value);
