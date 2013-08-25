@@ -40,7 +40,14 @@ var Game = function() {
         };
 
         this.setupGame = function() {
-            physics = new Physics(context, gameWidth, gameHeight);
+            physics = new Physics(context, gameWidth, gameHeight, function() {
+                state = END_SCREEN;
+                that.rotation = 0;
+                setTimeout(function() {
+                    $("#container").resetRotate();
+                }, 300);
+                console.log("reset");
+            });
             pixiSetup();
             soundSetup();
         };
