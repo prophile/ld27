@@ -10,18 +10,31 @@ var World = (function() {
         objects = _.filter(objects, function(x) { return x !== obj; });
     };
 
-    var clear = function() {
-        for (var i = 0; i < objects.length; i++) {
-            del(objects[i]);
-        }
-        objects = [];
-    }
-
     var all = function(message) {
         _.each(objects, function(x) { x(message); });
     };
 
-    return {"add": add, "del": del, "all": all, "clear":clear};
+    var select = function(message, callback) {
+        var best = null, bestCost = Number.POSITIVE_INFINITY;
+        var caller = function(obj) {
+            return function(x) {
+                var cost = callback(x);
+                if (cost === false)
+                    return;
+                if (cost < bestCost) {
+                    bestCost = cost;
+                    best = obj;
+                }
+            };
+        };
+        _.each(objects, function(obj) {
+            obj({id: message,
+                 callback: caller(obj)});
+        });
+        return best;
+    };
+
+    return {"add": add, "del": del, "all": all, "select": select};
 }());
 
 setInterval(function() {
@@ -191,7 +204,12 @@ var MovableComponent = function() {
 
 var GrabberComponent = function() {
     var attached = null;
+    var lastPosition = [0, 0];
     return function(message) {
+        if (message.id === "position") {
+            lastPosition[0] = message.x;
+            lastPosition[1] = message.y;
+        }
         if (message.id === "grab") {
             if (attached !== null) {
                 this({id: "removeWeldJoint",
@@ -199,7 +217,12 @@ var GrabberComponent = function() {
                 attached({id: "ungrabbed", sender: this});
                 attached = null;
             } else {
-                World.all({id: "grabbed", sender: this});
+                var target = World.select("canGrab", function(pos) {
+                    return Math.abs(lastPosition[0]-pos[0]) +
+                           Math.abs(lastPosition[1]-pos[1]);
+                });
+                target({id: "grabbed",
+                        sender: this});
             }
         }
         if (message.id === "attachLift") {
@@ -213,10 +236,18 @@ var GrabberComponent = function() {
 };
 
 var GrabbableComponent = function() {
+    var lastPosition = [0, 0];
     return function(message) {
+        if (message.id === "position") {
+            lastPosition[0] = message.x;
+            lastPosition[1] = message.y;
+        }
         if (message.id === "grabbed") {
             message.sender({id: "attachLift",
                             attached: this});
+        }
+        if (message.id === "canGrab") {
+            message.callback(lastPosition);
         }
     };
 };
