@@ -17,8 +17,6 @@ $(function() {
         var game = new Game(value);
         game.setupCanvas();
         game.setupGame();
-
-        Input.press("reloadConstants", Constants.reload);
     });
 });
 
