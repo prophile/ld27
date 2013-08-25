@@ -343,7 +343,7 @@ var Physics = function() {
                 //floor
                 var floorDef                 = new b2FixtureDef;
                 floorDef.shape               = new b2PolygonShape();
-                floorDef.IsSensor            = true;
+                floorDef.isSensor            = true;
                 //floorDef.friction            = 0.2;
                 //floorDef.restitution         = 0.7;
                 floorDef.shape.SetAsBox(width/2, height/2);
@@ -356,7 +356,6 @@ var Physics = function() {
 
                 body.SetUserData({tag: "GOAL"});
                 var fix = body.CreateFixture(floorDef);
-                fix.IsSensor = true;
 
                 var e = new Entity();
 
