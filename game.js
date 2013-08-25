@@ -127,9 +127,6 @@ var Game = function() {
             var text = new PIXI.Text("lol title screen", {font:"50px Arial", fill:"red"});
             titleStage.addChild(text);
 
-            bee = Bee(stage);
-            World.add(bee);
-            physics.newBlock(stage);
             physics.newBlock("player", stage, true);
         }
 
