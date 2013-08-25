@@ -10,18 +10,31 @@ var World = (function() {
         objects = _.filter(objects, function(x) { return x !== obj; });
     };
 
-    var clear = function() {
-        for (var i = 0; i < objects.length; i++) {
-            del(objects[i]);
-        }
-        objects = [];
-    }
-
     var all = function(message) {
         _.each(objects, function(x) { x(message); });
     };
 
-    return {"add": add, "del": del, "all": all, "clear":clear};
+    var select = function(message, callback) {
+        var best = null, bestCost = Number.POSITIVE_INFINITY;
+        var caller = function(obj) {
+            return function(x) {
+                var cost = callback(x);
+                if (cost === false)
+                    return;
+                if (cost < bestCost) {
+                    bestCost = cost;
+                    best = obj;
+                }
+            };
+        };
+        _.each(objects, function(obj) {
+            obj({id: message,
+                 callback: caller(obj)});
+        });
+        return best;
+    };
+
+    return {"add": add, "del": del, "all": all, "select": select};
 }());
 
 setInterval(function() {
@@ -95,6 +108,7 @@ var Entity = function(name) {
 };
 
 var PhysicsComponent = function(body) {
+    var currentJoint = null;
     return function(message) {
         if (message.id === "update") {
             var position = body.GetTransform().position;
@@ -133,8 +147,13 @@ var PhysicsComponent = function(body) {
                                         0.5*(srcCentre.y + destCentre.y));
                 var def = new Box2D.Dynamics.Joints.b2WeldJointDef;
                 def.Initialize(sourceBody, destBody, anchor);
-                var j = sourceBody.GetWorld().CreateJoint(def);
+                currentJoint = sourceBody.GetWorld().CreateJoint(def);
             }
+        }
+        if (message.id === "removeWeldJoint" && currentJoint !== null) {
+            body.GetWorld().DestroyJoint(currentJoint);
+            currentJoint = null;
+            console.log("weld joint removed");
         }
     };
 };
@@ -191,15 +210,25 @@ var MovableComponent = function() {
 
 var GrabberComponent = function() {
     var attached = null;
+    var lastPosition = [0, 0];
     return function(message) {
+        if (message.id === "position") {
+            lastPosition[0] = message.x;
+            lastPosition[1] = message.y;
+        }
         if (message.id === "grab") {
             if (attached !== null) {
-                this({id: "removeWeldJoint",
-                      to: attached});
+                this("removeWeldJoint");
+                attached("removeWeldJoint");
                 attached({id: "ungrabbed", sender: this});
                 attached = null;
             } else {
-                World.all({id: "grabbed", sender: this});
+                var target = World.select("canGrab", function(pos) {
+                    return Math.abs(lastPosition[0]-pos[0]) +
+                           Math.abs(lastPosition[1]-pos[1]);
+                });
+                target({id: "grabbed",
+                        sender: this});
             }
         }
         if (message.id === "attachLift") {
@@ -213,10 +242,18 @@ var GrabberComponent = function() {
 };
 
 var GrabbableComponent = function() {
+    var lastPosition = [0, 0];
     return function(message) {
+        if (message.id === "position") {
+            lastPosition[0] = message.x;
+            lastPosition[1] = message.y;
+        }
         if (message.id === "grabbed") {
             message.sender({id: "attachLift",
                             attached: this});
+        }
+        if (message.id === "canGrab") {
+            message.callback(lastPosition);
         }
     };
 };
@@ -237,6 +274,17 @@ var SpriteComponent = function(stage, sprite) {
 
         if (message.id === "absRotation") {
             sprite.rotation = message.value * Math.PI/180;
+        }
+    };
+};
+
+var RotateWithWorldComponent = function() {
+    return function(message) {
+        if (message.id == "updatePhysics") {
+            var body = message.body;
+            var phys = body.GetWorld().UserData;
+            var rot = phys.getRotation();
+            body.SetAngle(rot * (-Math.PI / 180));
         }
     };
 };
