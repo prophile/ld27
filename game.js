@@ -4,13 +4,14 @@ var Game = function() {
             return new Date().getTime() / 1000;
         }
 
-        var that = this;
-        var lastSpin = unixTime();
+        var that      = this;
+        var lastSpin  = unixTime();
+        var lastSpawn = unixTime();
 
         var renderer = null;
-        var physics = null;
-        var context = null;
-        var stage = null;
+        var physics  = null;
+        var context  = null;
+        var stage    = null;
 
         function canvasSize() {
             var $window = $(window);
@@ -52,14 +53,22 @@ var Game = function() {
         };
 
         function spinIfNecessary() {
-            if (unixTime() - lastSpin > 10) {
-                spawnBlocks();
-                spin();
-            }
+            Constants.get("spin_interval", function(value) {
+                if (unixTime() - lastSpin > value) {
+                    spin();
+                }
+            });
+
+            Constants.get("spawn_interval", function(value) {
+                if (unixTime() - lastSpawn > value) {
+                    spawnBlocks();
+                }
+            });
         }
 
         function spawnBlocks() {
             Constants.get(["blocks_to_spawn", "block_spawn_delay_ms"], function(blocksToSpawn, blockSpawnDelayMs) {
+                lastSpawn = unixTime();
                 var block_count = 0;
                 var timer = setInterval(function() {
                     physics.newBlock(stage);
