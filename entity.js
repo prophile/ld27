@@ -107,6 +107,7 @@ var PhysicsComponent = function(body) {
 var MovableComponent = function() {
     var movement = [0, 0];
     var speed = 0.0;
+    var verticalSpeed = 0.0;
     return function(message) {
         if (message.id === "attach") {
             var up = false, down = false, left = false, right = false;
@@ -121,7 +122,7 @@ var MovableComponent = function() {
                 if (right)
                     x += 1;
                 movement[0] = x * speed;
-                movement[1] = y * speed;
+                movement[1] = y * verticalSpeed;
             };
             Input.hold('move_up', function(x) { up = x; recompute(); });
             Input.hold('move_down', function(x) { down = x; recompute(); });
@@ -130,6 +131,9 @@ var MovableComponent = function() {
         }
         if (message.id === "setMovementSpeed") {
             speed = message.speed;
+        }
+        if (message.id === "setVerticalSpeed") {
+            verticalSpeed = message.speed;
         }
         if (message.id === "updatePhysics") {
             phys = message.body.GetWorld().UserData;

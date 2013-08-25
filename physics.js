@@ -78,6 +78,9 @@ var Physics = function() {
                 Constants.get("movement_speed", function(x) {
                     e({id: "setMovementSpeed", speed: x});
                 });
+                Constants.get("movement_vertical", function(x) {
+                    e({id: "setVerticalSpeed", speed: x});
+                });
                 console.log("here");
                 World.add(e);
             });
