@@ -234,12 +234,6 @@ var SpriteComponent = function(stage, sprite) {
             console.log("got delete");
             stage.removeChild(sprite);
         }
-        if (message.id === "grabbed") {
-            sprite.alpha = 0.5;
-        }
-        if (message.id === "ungrabbed") {
-            sprite.alpha = 1.0;
-        }
 
         if (message.id === "absRotation") {
             sprite.rotation = message.value * Math.PI/180;
