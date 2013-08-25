@@ -24,7 +24,7 @@ deps: Makefile box2d.js $(LIBRARIES)
 	cat $(LIBRARIES) > libraries.js
 
 clean:
-	rm -f $(LIBRARIES) libraries.js
+	rm -f $(LIBRARIES) libraries.js ld.js
 
 .PHONY: all clean deps
 
