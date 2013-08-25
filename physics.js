@@ -109,6 +109,8 @@ var Physics = function() {
                     bodyDef.type                 = b2Body.b2_dynamicBody;
                     if (/c/.exec(flags)) {
                         fd.shape.SetAsBox(1, 2.5);
+                    } else {
+                        fd.shape.SetAsBox(1, 1);
                     }
                     var radius = dist;
                     var gravVec = newGravity()
@@ -136,6 +138,8 @@ var Physics = function() {
 
                     if (/c/.exec(flags)) {
                         beeSprite.anchor.x = 0.42;
+                    } else {
+                        beeSprite.anchor.x = 0.5;
                     }
                     beeSprite.anchor.y = 0.5;
 
