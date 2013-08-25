@@ -109,6 +109,7 @@ var Game = function() {
                 var block_count = 0;
                 var timer = setInterval(function() {
                     physics.newBlock("block", stage);
+                    block_count++;
                     if (block_count == blocksToSpawn) {
                         clearInterval(timer);
                     }
