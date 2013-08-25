@@ -17,15 +17,15 @@ var World = (function() {
         objects = [];
     }
 
-    var all = function(callback) {
-        _.each(objects, callback);
+    var all = function(message) {
+        _.each(objects, function(x) { x(message); });
     };
 
     return {"add": add, "del": del, "all": all, "clear":clear};
 }());
 
 setInterval(function() {
-    World.all(function(x) { x("update"); });
+    World.all("update");
 }, 1000 * (1 / 60));
 
 var RecursionTrap = function(limit) {
