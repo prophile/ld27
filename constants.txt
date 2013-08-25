@@ -41,3 +41,4 @@ bad_block_scale       -- scale for a bad block
 bad_block_prob        -- probability a bad block spawns 0 < x < 1
 goal_image            -- image of the door
 goal_scale            -- scale of the door
+jump_cooldown         -- cooldown between jumps, in seconds
