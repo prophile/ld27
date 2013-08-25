@@ -39,3 +39,5 @@ debug_physics         -- display all hitboxes
 bad_block_image       -- image for a bad block
 bad_block_scale       -- scale for a bad block
 bad_block_prob        -- probability a bad block spawns 0 < x < 1
+goal_image            -- image of the door
+goal_scale            -- scale of the door
