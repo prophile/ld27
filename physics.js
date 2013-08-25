@@ -221,6 +221,7 @@ var Physics = function() {
             floorBodyDef.position.x           = x/PIXELS_PER_METER;
             floorBodyDef.position.y           = y/PIXELS_PER_METER;
             var body = that.world.CreateBody(floorBodyDef)
+            body.SetUserData({'tag': 'WALL'});
                 var fix = body.CreateFixture(floorDef);
             setPhysicalProperties('wall', fix, true);
         }
