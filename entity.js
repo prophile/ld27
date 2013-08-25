@@ -100,14 +100,25 @@ var PhysicsComponent = function(body) {
                   y: position.y * PIXELS_PER_METER});
             this({id:"absRotation",
                   value: body.GetTransform().rotation * 180/Math.PI});
+            var vel = body.GetLinearVelocity();
+            console.log(vel.x.toFixed(2), vel.y.toFixed(2));
         }
         if (message.id === "applyImpulse") {
-            phys = body.GetWorld().UserData;
-            rotated = phys.rotate([message.x, message.y]);
-            b2Vec2 = Box2D.Common.Math.b2Vec2;
-            console.log(message);
-            body.ApplyImpulse(new b2Vec2(rotated[0], rotated[1]),
-                                    body.GetWorldCenter());
+            var phys = body.GetWorld().UserData;
+            var rotated = phys.rotate([message.x * 60, message.y * 60]);
+            var b2Vec2 = Box2D.Common.Math.b2Vec2;
+            body.ApplyForce(new b2Vec2(rotated[0] * 60,
+                                       rotated[1] * 60),
+                            body.GetWorldCenter());
+            console.log(rotated);
+            //console.log(rotated);
+            //body.ApplyImpulse(new b2Vec2(rotated[0], rotated[1]),
+            //                        body.GetWorldCenter());
+            //var oldVelocity = body.GetLinearVelocity();
+            //oldVelocity.x += rotated[0];
+            //oldVelocity.y += rotated[1];
+            //oldVelocity.y += 10000000;
+            //body.SetLinearVelocity(oldVelocity);
         }
     };
 };

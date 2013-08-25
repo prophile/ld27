@@ -21,6 +21,10 @@ var Physics = function() {
         var b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
         var b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
         var b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
+        var b2Settings = Box2D.Common.b2Settings;
+
+        b2Settings.b2_maxTranslation = 10000.0;
+        b2Settings.b2_maxTranslationSquared = 10000.0*10000.0;
 
         var that = this;
         var turnRate = 0;
