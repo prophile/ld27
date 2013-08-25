@@ -86,10 +86,7 @@ var Physics = function() {
 
         newWorld(endGameCallback);
 
-        this.newBlock = function(cls, stage, controllable) {
-            if (controllable === undefined) {
-                controllable = false;
-            }
+        this.newBlock = function(cls, stage) {
             var fd                 = new b2FixtureDef;
             fd.shape               = new b2PolygonShape();
             fd.density = 1.0;

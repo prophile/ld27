@@ -165,7 +165,7 @@ var Game = function() {
             var text = new PIXI.Text("lol title screen", {font:"50px Arial", fill:"red"});
             titleStage.addChild(text);
 
-            physics.newBlock("player", container, true);
+            physics.newBlock("player", container);
         }
 
         function soundSetup() {
