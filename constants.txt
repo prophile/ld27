@@ -46,3 +46,4 @@ maximum_rotation      -- the amount the level rotates by, should be at least 360
 mousehole_spawn_distance -- height above center to spawn things relative to current gravity.
 platform_restitution  -- restitution coefficient of platforms
 platform_friction     -- friction coefficient of platforms
+spawn_randomness      -- randomness of location of spawn of boxes.
