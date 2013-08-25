@@ -49,7 +49,10 @@ var Physics = function() {
 
         newWorld();
 
-        this.newBlock = function(stage) {
+        this.newBlock = function(cls, stage, controllable) {
+            if (controllable === undefined) {
+                controllable = false;
+            }
             var fd                 = new b2FixtureDef;
             fd.shape               = new b2PolygonShape();
             fd.density = 1.0;
@@ -67,7 +70,7 @@ var Physics = function() {
             body.CreateFixture(fd);
 
             var e = new Entity();
-            Constants.get(["block_image", "block_scale"], function(value, scale) {
+            Constants.get([cls + "_image", cls + "_scale"], function(value, scale) {
                 console.log("value");
                 console.log(value);
                 var beeTexture = PIXI.Texture.fromImage(value, true);
@@ -81,13 +84,15 @@ var Physics = function() {
 
                 e.addComponent(SpriteComponent(stage, beeSprite));
                 e.addComponent(PhysicsComponent(body));
-                e.addComponent(MovableComponent());
-                Constants.get("movement_speed", function(x) {
-                    e({id: "setMovementSpeed", speed: x});
-                });
-                Constants.get("movement_vertical", function(x) {
-                    e({id: "setVerticalSpeed", speed: x});
-                });
+                if (controllable) {
+                    e.addComponent(MovableComponent());
+                    Constants.get("movement_speed", function(x) {
+                        e({id: "setMovementSpeed", speed: x});
+                    });
+                    Constants.get("movement_vertical", function(x) {
+                        e({id: "setVerticalSpeed", speed: x});
+                    });
+                }
                 console.log("here");
                 World.add(e);
             });
@@ -105,7 +110,7 @@ var Physics = function() {
                 that.world.SetGravity(newGravity());
             }
 
-            that.world.Step(10, 10);
+            that.world.Step(1/60, 10, 10);
             that.world.ClearForces();
         };
 
