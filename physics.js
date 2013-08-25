@@ -168,6 +168,38 @@ var Physics = function() {
             addWall(-100, gameHeight/2, 100000, 3, 45, 0, 0);
             addWall(gameWidth/2, -100, 10000, 3, -45, 0, 0);
             addWall(gameWidth/2, gameHeight+100, 10000, 3, -45, 0, 0);
+            var myContactListener = function() {
+                return {
+                    "BeginContact" : function() {
+                        console.log("lol");
+                    },
+                    "EndContact" : function() {
+                    },
+                    "PreSolve" : function() {
+                    },
+                    "PostSolve" : function() {
+                    }
+                }
+            };
+            that.world.SetContactListener(myContactListener());
+        }
+
+        this.newGoal = function(gameSize) {
+            Constants.get(["goal_width", "goal_height"], function(width, height) {
+                //floor
+                var floorDef                 = new b2FixtureDef;
+                floorDef.shape               = new b2PolygonShape();
+                floorDef.IsSensor            = true;
+                floorDef.friction            = 0.2;
+                floorDef.restitution         = 0.7;
+                floorDef.shape.SetAsOrientedBox(width/2, height/2);
+
+                var floorBodyDef                  = new b2BodyDef();
+                floorBodyDef.type                 = b2Body.b2_staticBody;
+                floorBodyDef.position.x           = gameSize*0.5/PIXELS_PER_METER;
+                floorBodyDef.position.y           = gameSize*0.5/PIXELS_PER_METER;
+                that.world.CreateBody(floorBodyDef).CreateFixture(floorDef);
+            });
         }
 
         this.rotate = rotate;

@@ -128,6 +128,7 @@ var Game = function() {
             titleStage.addChild(text);
 
             physics.newBlock("player", stage, true);
+            physics.newGoal(canvasSize());
         }
 
         function soundSetup() {
