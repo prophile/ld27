@@ -93,6 +93,7 @@ var Physics = function() {
             }
 
             that.world.Step(3,3);
+            that.world.ClearForces();
         };
 
         this.getRotation = function() {
