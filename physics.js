@@ -97,6 +97,9 @@ var Physics = function() {
             fd.restitution = 0.1;
 
             var killsYou = Math.random() < 0.25;
+            if (cls == "block" && killsYou) {
+                cls = "block_bad";
+            }
 
             fd.shape.SetAsBox(1,1);
 
@@ -133,27 +136,12 @@ var Physics = function() {
                         e({id: "setVerticalSpeed", speed: x});
                     });
                     e.addComponent(GrabberComponent());
-                } else if(killsYou) {
-                    Constants.get(["block_bad_image", "block_bad_scale"], function(image, scale) {
-                        var beeTexture = PIXI.Texture.fromImage(image, true);
-                        var beeSprite = new PIXI.Sprite(beeTexture);
-                        var e = new Entity();
-
-                        beeSprite.anchor.x = 0.5;
-                        beeSprite.anchor.y = 0.5;
-
-                        beeSprite.scale.x = scale;
-                        beeSprite.scale.y = scale;
-
-                        e.addComponent(SpriteComponent(stage, beeSprite));
-                        e.addComponent(PhysicsComponent(body));
-                        body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":true});
-                        World.add(e);
-                    });
+                } else if (killsYou) {
+                    body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":true});
                 } else {
                     e.addComponent(GrabbableComponent());
-                    World.add(e);
                 }
+                World.add(e);
             });
         };
 
