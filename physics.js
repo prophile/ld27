@@ -144,6 +144,7 @@ var Physics = function() {
                         });
                         e.addComponent(GrabberComponent());
                         e.addComponent(RotateWithWorldComponent());
+                        e.addComponent(DebounceComponent('jump', 'jump_cooldown'));
                     } else if (killsYou) {
                         body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":true});
                     } else {
