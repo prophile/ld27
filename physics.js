@@ -143,6 +143,7 @@ var Physics = function() {
                             e({id: "setVerticalSpeed", speed: x});
                         });
                         e.addComponent(GrabberComponent());
+                        e.addComponent(RotateWithWorldComponent());
                     } else if (killsYou) {
                         body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":true});
                     } else {

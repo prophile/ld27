@@ -278,6 +278,17 @@ var SpriteComponent = function(stage, sprite) {
     };
 };
 
+var RotateWithWorldComponent = function() {
+    return function(message) {
+        if (message.id == "updatePhysics") {
+            var body = message.body;
+            var phys = body.GetWorld().UserData;
+            var rot = phys.getRotation();
+            body.SetAngle(rot * (-Math.PI / 180));
+        }
+    };
+};
+
 var RollComponent = function() {
     var rate = 0.0;
     return function(message) {
