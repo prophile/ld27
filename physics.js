@@ -50,7 +50,7 @@ var Physics = function() {
             fd.shape               = new b2PolygonShape();
             fd.density = 1.0;
             fd.friction = 0.3;
-            fd.restitution = 0.0;
+            fd.restitution = 0.1;
 
             fd.shape.SetAsBox(1,1);
 
