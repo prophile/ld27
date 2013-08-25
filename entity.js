@@ -66,8 +66,6 @@ var Entity = function(name) {
 
     var target = function(message) {
         recursionTrap.check();
-        //console.log("Message for " + name + ":");
-        //console.log(message);
         message = wrapMessage(message);
         if (message.id === "addComponent") {
             recursionTrap.safely(function() {
@@ -119,9 +117,13 @@ var PhysicsComponent = function(body) {
         if (message.id == "addWeldJoint") {
             var to = message.to;
             var sourceBody = message.sourceBody;
+            if (to === undefined && sourceBody === undefined) {
+                throw "Bad addWeldJoint message.";
+            }
             if (sourceBody === undefined) {
                 to({id: "addWeldJoint",
                     sourceBody: body});
+                console.log("adding weld joint");
             } else {
                 var destBody = body;
                 var srcCentre = sourceBody.GetWorldCenter();
@@ -131,6 +133,7 @@ var PhysicsComponent = function(body) {
                                         0.5*(srcCentre.y + destCentre.y));
                 var def = new Box2D.Dynamics.Joints.b2WeldJointDef;
                 def.Initialize(sourceBody, destBody, anchor);
+                var j = sourceBody.GetWorld().CreateJoint(def);
             }
         }
     };
@@ -193,14 +196,14 @@ var GrabberComponent = function() {
             if (attached !== null) {
                 this({id: "removeWeldJoint",
                       to: attached});
-                attached({id: "ungrabbed"});
+                attached({id: "ungrabbed", sender: this});
                 attached = null;
             } else {
-                World.all({id: "grabbed"});
+                World.all({id: "grabbed", sender: this});
             }
         }
         if (message.id === "attachLift") {
-            attached = this.attached;
+            attached = message.attached;
             this({id: "addWeldJoint",
                   to: attached});
         }
@@ -228,6 +231,12 @@ var SpriteComponent = function(stage, sprite) {
         if (message.id === "delete") {
             console.log("got delete");
             stage.removeChild(sprite);
+        }
+        if (message.id === "grabbed") {
+            sprite.alpha = 0.5;
+        }
+        if (message.id === "ungrabbed") {
+            sprite.alpha = 1.0;
         }
 
         if (message.id === "absRotation") {

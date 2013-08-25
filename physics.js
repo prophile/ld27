@@ -131,6 +131,8 @@ var Physics = function() {
                         e({id: "setVerticalSpeed", speed: x});
                     });
                     e.addComponent(GrabberComponent());
+                } else {
+                    e.addComponent(GrabbableComponent());
                 }
                 World.add(e);
             });
