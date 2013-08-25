@@ -10,6 +10,10 @@ var World = (function() {
         objects = _.filter(objects, function(x) { return x !== obj; });
     };
 
+    var clear = function(obj) {
+        objects = [];
+    }
+
     var all = function(callback) {
         _.each(objects, callback);
     };
@@ -160,7 +164,6 @@ var SpriteComponent = function(stage, sprite) {
         }
 
         if (message.id === "absRotation") {
-            console.log(message.value);
             sprite.rotation = message.value * Math.PI/180;
         }
     };
@@ -200,4 +203,3 @@ var Bee = function(stage) {
 
     return entity;
 };
-

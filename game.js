@@ -7,11 +7,16 @@ var Game = function() {
         var that      = this;
         var lastSpin  = unixTime();
         var lastSpawn = unixTime();
+        var TITLE_SCREEN = 0;
+        var GAME = 1;
+        var END_SCREEN = 2;
+        var state     = TITLE_SCREEN;
 
         var renderer = null;
         var physics  = null;
         var context  = null;
         var stage    = null;
+        var titleStage = null;
 
         function canvasSize() {
             var $window = $(window);
@@ -42,8 +47,26 @@ var Game = function() {
 
         this.step = function() {
             requestAnimFrame(that.step);
-            that.update();
-            that.render();
+            if (state == TITLE_SCREEN) {
+                console.log("title");
+                Input.press("title_to_game", function() {
+                    console.log("pushed");
+                    state = GAME;
+                });
+                that.draw_title_screen();
+            } else if (state == GAME) {
+                that.update();
+                that.render();
+            } else {
+                Input.press("end_to_game", function() {
+                    state = GAME;
+                });
+                that.draw_end_screen();
+            }
+        };
+
+        this.draw_title_screen = function() {
+            renderer.render(titleStage);
         };
 
         this.update = function() {
@@ -99,6 +122,10 @@ var Game = function() {
             stage.position.x = canvasSize()/2;
             stage.position.y = canvasSize()/2;
             requestAnimFrame(that.step);
+
+            titleStage = new PIXI.Stage(0xFFFF00);
+            var text = new PIXI.Text("lol title screen", {font:"50px Arial", fill:"red"});
+            titleStage.addChild(text);
 
             bee = Bee(stage);
             World.add(bee);
