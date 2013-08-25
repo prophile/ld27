@@ -102,9 +102,11 @@ var PhysicsComponent = function(body) {
                   value: body.GetTransform().rotation * 180/Math.PI});
         }
         if (message.id === "applyImpulse") {
+            phys = body.GetWorld().UserData;
+            rotated = phys.rotate([message.x, message.y]);
             b2Vec2 = Box2D.Common.Math.b2Vec2;
             console.log(message);
-            body.ApplyImpulse(new b2Vec2(message.x, message.y),
+            body.ApplyImpulse(new b2Vec2(rotated[0], rotated[1]),
                                     body.GetWorldCenter());
         }
     };
