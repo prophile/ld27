@@ -326,36 +326,3 @@ var RotateWithWorldComponent = function() {
     };
 };
 
-var RollComponent = function() {
-    var rate = 0.0;
-    return function(message) {
-        if (message.id === "update") {
-            this({id: "rotate", amount: rate});
-        }
-        if (message.id === "rotationRate") {
-            rate = message.rotationRate;
-        }
-    };
-};
-
-// ENTITY DEFINITIONS
-
-var Bee = function(stage) {
-    var entity = Entity("bee");
-
-    var beeTexture = PIXI.Texture.fromImage('bee.png');
-    var beeSprite = new PIXI.Sprite(beeTexture);
-
-    beeSprite.anchor.x = 0.5;
-    beeSprite.anchor.y = 0.5;
-
-    entity.addComponent(SpriteComponent(stage, beeSprite));
-    entity.addComponent(RollComponent());
-
-    entity({"id": rotationRate,
-            "rotationRate": Constants.k("debug_beeRotationRate")});
-
-    entity({id: "position", x: 200, y: 200});
-
-    return entity;
-};
