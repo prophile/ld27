@@ -1,0 +1,25 @@
+bee_man               -- ignored
+debug_beeRotationRate -- ignored
+world_rotation_rate   -- speed at which the world spins every 10s (degrees per tick)
+key_reloadConstants   -- key binding: reload all constants
+music_enable          -- play music
+block_image           -- image URI for basic blocks
+block_scale           -- image scale for basic blocks
+key_move_up           -- key binding: jump
+key_move_down         -- ignored
+key_move_left         -- key binding: left
+key_move_right        -- key binding: right
+key_make_block        -- key binding: spam blocks (debug)
+world_gravity         -- strength of gravity (in m s^-2)
+blocks_to_span        -- number of blocks spawned at each rotation
+block_spawn_delay_ms  -- time between block spawns, in milliseconds
+movement_speed        -- lateral movement speed of player, in newtons
+spin_interval         -- time between roations, in seconds
+spawn_interval        -- time between block spawns, in seconds
+movement_vertical     -- jump impulse, in newton-seconds
+key_title_to_game     -- key binding: start game from title screen
+player_image          -- image URI for the player
+player_scale          -- image scale for the player
+physics_velocityIterations -- accuracy of physics for velocity
+physics_positionIterations -- accuracy of physics for position
+
