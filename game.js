@@ -110,22 +110,30 @@ var Game = function() {
         }
 
         function spawnBlocks() {
-            Constants.get(["blocks_to_spawn", "block_spawn_delay_ms"], function(blocksToSpawn, blockSpawnDelayMs) {
+            Constants.get(["blocks_to_spawn", "block_spawn_delay_ms"],
+                          function(blocksToSpawn, blockSpawnDelayMs) {
                 lastSpawn = unixTime();
                 var block_count = 0;
                 var timer = setInterval(function() {
-                    physics.newBlock("block", container);
-                    block_count++;
-                    if (block_count == blocksToSpawn) {
-                        clearInterval(timer);
-                    }
+                    Constants.get("debug_noSpawnBlocks", function(dis) {
+                        if (dis)
+                            return;
+                        physics.newBlock("block", container);
+                        block_count++;
+                        if (block_count == blocksToSpawn) {
+                            clearInterval(timer);
+                        }
+                    });
                 }, blockSpawnDelayMs);
             });
         }
 
         function spin() {
             lastSpin = unixTime();
-            Constants.get("maximum_rotation", function(value) {
+            Constants.get(["maximum_rotation", "debug_noSpin"],
+                          function(value, noSpin) {
+                if (noSpin)
+                    return;
                 physics.setTargetRotation(Math.random()*value);
             });
         }
