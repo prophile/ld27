@@ -157,13 +157,13 @@ var Game = function() {
             stage.position.y = gameHeight/2;
             stage.addChild(container);
             value = Constants.k('clock_face');
-            var clock = new Entity();
+            var clock = new BaseEntity();
             console.log(value);
             var beeTexture = PIXI.Texture.fromImage(value, true);
             var beeSprite = new PIXI.Sprite(beeTexture);
             beeSprite.width = gameWidth;
             beeSprite.height = gameHeight;
-            clock.addComponent(SpriteComponent(container, beeSprite));
+            clock = new SpriteAdapter(container, beeSprite, clock);
             World.add(clock);
             physics.newGoal(gameWidth, container);
             requestAnimFrame(that.step);

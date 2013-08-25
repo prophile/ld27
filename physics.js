@@ -119,7 +119,7 @@ var Physics = function() {
             var fix = body.CreateFixture(fd);
             setPhysicalProperties(cls, fix);
 
-            var e = new Entity();
+            var e = new BaseEntity();
             body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":false});
             var beeTexture = PIXI.Texture.fromImage(value, true);
             var beeSprite = new PIXI.Sprite(beeTexture);
@@ -134,28 +134,26 @@ var Physics = function() {
             beeSprite.scale.x = scale;
             beeSprite.scale.y = scale;
 
-            e.addComponent(SpriteComponent(stage, beeSprite));
-            e.addComponent(PhysicsComponent(body));
+            e = new SpriteAdapter(stage, beeSprite, e);
+            e = new PhysicsEntityAdapter(body, e)
             if (/c/.exec(flags)) {
                 body.SetUserData({tag: "PLAYER", entity:e});
-                e.addComponent(MovableComponent());
-                e({id: "setMovementSpeed", speed: Constants.k('movement_speed')});
-                _.defer(function() {
-                e({id: "setVerticalSpeed",
-                   unencumbered: Constants.k('movement_vertical'),
-                   cargo: Constants.k('movement_vertical_cargo')});
-                });
-                e.addComponent(GrabberComponent());
-                e.addComponent(DebounceComponent('jump', 'jump_cooldown'));
+                e = new LateralMovementAdapter(e);
+                e = new JumpAdapter(e);
+                e = new JumpSpacingAdapter(e);
+                e = new GrabAdapter(e);
+                e = new ControlAdapter(e);
             }
             if (/f/.exec(flags)) {
-                e.addComponent(RotateWithWorldComponent());
+                e = new RotateWithWorldAdapter(e);
             }
             if (/d/.exec(flags)) {
+                e = new PoisonAdapter(e);
                 body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":true});
             }
             if (/g/.exec(flags)) {
-                e.addComponent(GrabbableComponent());
+                e = new GrabbableAdapter(e);
+                e = new ScoreAdapter(e);
             }
             World.add(e);
         };
@@ -347,7 +345,7 @@ var Physics = function() {
             body.SetUserData({tag: "GOAL"});
             var fix = body.CreateFixture(floorDef);
 
-            var e = new Entity();
+            var e = new BaseEntity();
 
             var beeTexture = PIXI.Texture.fromImage(image, true);
             var beeSprite = new PIXI.Sprite(beeTexture);
@@ -359,7 +357,7 @@ var Physics = function() {
 
             beeSprite.scale.x = scale;
             beeSprite.scale.y = scale;
-            e.addComponent(SpriteComponent(stage, beeSprite));
+            e = new SpriteAdapter(stage, beeSprite, e);
             World.add(e);
         }
 
