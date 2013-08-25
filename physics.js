@@ -21,6 +21,10 @@ var Physics = function() {
         var b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
         var b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
         var b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
+        var b2Settings = Box2D.Common.b2Settings;
+
+        b2Settings.b2_maxTranslation = 10000.0;
+        b2Settings.b2_maxTranslationSquared = 10000.0*10000.0;
 
         var that = this;
         var turnRate = 0;
@@ -45,7 +49,10 @@ var Physics = function() {
 
         newWorld();
 
-        this.newBlock = function(stage) {
+        this.newBlock = function(cls, stage, controllable) {
+            if (controllable === undefined) {
+                controllable = false;
+            }
             var fd                 = new b2FixtureDef;
             fd.shape               = new b2PolygonShape();
             fd.density = 1.0;
@@ -58,11 +65,12 @@ var Physics = function() {
             bodyDef.type                 = b2Body.b2_dynamicBody;
             bodyDef.position.x           = 300/PIXELS_PER_METER;
             bodyDef.position.y           = 300/PIXELS_PER_METER;
+            bodyDef.allowSleep           = false;
             var body = that.world.CreateBody(bodyDef);
             body.CreateFixture(fd);
 
             var e = new Entity();
-            Constants.get(["block_image", "block_scale"], function(value, scale) {
+            Constants.get([cls + "_image", cls + "_scale"], function(value, scale) {
                 console.log("value");
                 console.log(value);
                 var beeTexture = PIXI.Texture.fromImage(value, true);
@@ -76,13 +84,15 @@ var Physics = function() {
 
                 e.addComponent(SpriteComponent(stage, beeSprite));
                 e.addComponent(PhysicsComponent(body));
-                e.addComponent(MovableComponent());
-                Constants.get("movement_speed", function(x) {
-                    e({id: "setMovementSpeed", speed: x});
-                });
-                Constants.get("movement_vertical", function(x) {
-                    e({id: "setVerticalSpeed", speed: x});
-                });
+                if (controllable) {
+                    e.addComponent(MovableComponent());
+                    Constants.get("movement_speed", function(x) {
+                        e({id: "setMovementSpeed", speed: x});
+                    });
+                    Constants.get("movement_vertical", function(x) {
+                        e({id: "setVerticalSpeed", speed: x});
+                    });
+                }
                 console.log("here");
                 World.add(e);
             });
@@ -92,6 +102,15 @@ var Physics = function() {
             that.world.DrawDebugData();
         };
 
+        var velocityIterations = 12, positionIterations = 12;
+
+        Constants.get(["physics_velocityIterations",
+                       "physics_positionIterations"],
+                       function(x, y) {
+                           velocityIterations = x;
+                           positionIterations = y;
+                       });
+
         this.update = function() {
             if (Math.abs(targetRotation - rotation) > turnRate) {
                 function sign(x) { return x ? x < 0 ? -1 : 1 : 0; }
@@ -100,7 +119,7 @@ var Physics = function() {
                 that.world.SetGravity(newGravity());
             }
 
-            that.world.Step(10, 10);
+            that.world.Step(1/60, velocityIterations, positionIterations);
             that.world.ClearForces();
         };
 

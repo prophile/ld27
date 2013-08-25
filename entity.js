@@ -105,6 +105,14 @@ var PhysicsComponent = function(body) {
             this({id:"absRotation",
                   value: body.GetAngle() * 180/Math.PI});
         }
+        if (message.id === "applyImpulse") {
+            var phys = body.GetWorld().UserData;
+            var rotated = phys.rotate([message.x * 60, message.y * 60]);
+            var b2Vec2 = Box2D.Common.Math.b2Vec2;
+            body.ApplyForce(new b2Vec2(rotated[0] * 60,
+                                       rotated[1] * 60),
+                            body.GetWorldCenter());
+        }
     };
 };
 
@@ -114,22 +122,22 @@ var MovableComponent = function() {
     var verticalSpeed = 0.0;
     return function(message) {
         if (message.id === "attach") {
-            var up = false, down = false, left = false, right = false;
+            var left = false, right = false;
             var recompute = function() {
-                var x = 0, y = 0;
-                if (up)
-                    y -= 1;
-                if (down)
-                    y += 1;
+                var x = 0;
                 if (left)
                     x -= 1;
                 if (right)
                     x += 1;
                 movement[0] = x * speed;
-                movement[1] = y * verticalSpeed;
+                movement[1] = 0;
             };
-            Input.hold('move_up', function(x) { up = x; recompute(); });
-            Input.hold('move_down', function(x) { down = x; recompute(); });
+            var that = this;
+            Input.press('move_up', function(x) {
+                that({id: "applyImpulse",
+                      x: 0,
+                      y: -verticalSpeed});
+            });
             Input.hold('move_left', function(x) { left = x; recompute(); });
             Input.hold('move_right', function(x) { right = x; recompute(); });
         }

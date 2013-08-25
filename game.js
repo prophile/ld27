@@ -94,7 +94,7 @@ var Game = function() {
                 lastSpawn = unixTime();
                 var block_count = 0;
                 var timer = setInterval(function() {
-                    physics.newBlock(stage);
+                    physics.newBlock("block", stage);
                     block_count++;
                     if (block_count == blocksToSpawn) {
                         clearInterval(timer);
@@ -130,6 +130,7 @@ var Game = function() {
             bee = Bee(stage);
             World.add(bee);
             physics.newBlock(stage);
+            physics.newBlock("player", stage, true);
         }
 
         function soundSetup() {
