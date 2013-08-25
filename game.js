@@ -35,7 +35,8 @@ var Game = function() {
             });
             $('#container').append(renderer.view);
             $("#container").css({
-                "margin-top": ($(window).height()-canvasSize())/2
+                "top": ($(window).height()-canvasSize())/2,
+                "left": ($(window).width()-canvasSize())/2
             });
         };
 
