@@ -42,7 +42,9 @@ bad_block_prob        -- probability a bad block spawns 0 < x < 1
 goal_image            -- image of the door
 goal_scale            -- scale of the door
 jump_cooldown         -- cooldown between jumps, in seconds
-maximum_rotation      -- the amount the level rotates by, should be at least 360.
+maximum_rotation      -- the maximum rotation per spin
 mousehole_spawn_distance -- height above center to spawn things relative to current gravity.
 platform_restitution  -- restitution coefficient of platforms
 platform_friction     -- friction coefficient of platforms
+spawn_randomness      -- randomness of location of spawn of boxes.
+minimum_rotation      -- the minimum rotation per spin

@@ -104,7 +104,7 @@ var Physics = function() {
 
                 fd.shape.SetAsBox(1,1);
 
-                Constants.get([cls + "_image", cls + "_scale", cls + '_flags', "game_size", "mousehole_spawn_distance"], function(value, scale, flags, size, dist) {
+                Constants.get([cls + "_image", cls + "_scale", cls + '_flags', "game_size", "mousehole_spawn_distance", "spawn_randomness"], function(value, scale, flags, size, dist, randomness) {
                     var bodyDef                  = new b2BodyDef();
                     bodyDef.type                 = b2Body.b2_dynamicBody;
                     var radius = dist;
@@ -113,8 +113,8 @@ var Physics = function() {
                     gravVec.Normalize();
                     gravVec.Multiply(radius);
 
-                    var x = size/2+gravVec.x;
-                    var y = size/2+gravVec.y;
+                    var x = size/2+gravVec.x+Math.random()*randomness-randomness/2;
+                    var y = size/2+gravVec.y+Math.random()*randomness-randomness/2;
 
                     bodyDef.position.x           = x/PIXELS_PER_METER;
                     bodyDef.position.y           = y/PIXELS_PER_METER;
@@ -190,6 +190,7 @@ var Physics = function() {
                 that.world.SetGravity(newGravity());
             } else {
                 if (!doneRotating) {
+                    rotation = targetRotation;
                     callback();
                     console.log("done rotating");
                     doneRotating = true;

@@ -35,7 +35,8 @@ var Game = function() {
             });
             $('#container').append(renderer.view);
             $("#container").css({
-                "margin-top": ($(window).height()-canvasSize())/2
+                "top": ($(window).height()-canvasSize())/2,
+                "left": ($(window).width()-canvasSize())/2
             });
         };
 
@@ -130,11 +131,20 @@ var Game = function() {
 
         function spin() {
             lastSpin = unixTime();
-            Constants.get(["maximum_rotation", "debug_noSpin"],
-                          function(value, noSpin) {
+            Constants.get(["minimum_rotation", "maximum_rotation", "debug_noSpin"],
+                          function(min, max, noSpin) {
                 if (noSpin)
                     return;
-                physics.setTargetRotation(Math.random()*value);
+                var direction = Math.ceil(Math.random());
+                if (direction == 0) {
+                    direction = -1;
+                }
+
+                var range = max - min;
+                var angle = min + Math.random() * range;
+                console.log(angle);
+                console.log(range);
+                physics.setTargetRotation(angle + physics.getRotation());
             });
         }
 
