@@ -50,16 +50,20 @@ var Game = function() {
             if (state == TITLE_SCREEN) {
                 console.log("title");
                 Input.press("title_to_game", function() {
-                    console.log("pushed");
-                    state = GAME;
+                    if (state == TITLE_SCREEN) {
+                        console.log("pushed");
+                        state = GAME;
+                    }
                 });
                 that.draw_title_screen();
             } else if (state == GAME) {
                 that.update();
                 that.render();
             } else {
-                Input.press("end_to_game", function() {
-                    state = GAME;
+                Input.press("title_to_game", function() {
+                    if (state == END_SCREEN) {
+                        location.reload();
+                    }
                 });
                 that.draw_end_screen();
             }
@@ -69,7 +73,17 @@ var Game = function() {
             renderer.render(titleStage);
         };
 
+        this.draw_end_screen = function() {
+            renderer.render(titleStage);
+        };
+
         this.update = function() {
+            Constants.get("target_cheeses", function(value) {
+                $("#removed").text("Boxes removed: " + physics.boxesRemoved + "/" + value);
+                if (physics.boxesRemoved >= value) {
+                    state = END_SCREEN;
+                }
+            });
             spinIfNecessary();
             physics.update();
             $("#container").rotate(physics.getRotation());
@@ -95,7 +109,6 @@ var Game = function() {
                 var block_count = 0;
                 var timer = setInterval(function() {
                     physics.newBlock("block", stage);
-                    block_count++;
                     if (block_count == blocksToSpawn) {
                         clearInterval(timer);
                     }

@@ -10,7 +10,10 @@ var World = (function() {
         objects = _.filter(objects, function(x) { return x !== obj; });
     };
 
-    var clear = function(obj) {
+    var clear = function() {
+        for (var i = 0; i < objects.length; i++) {
+            del(objects[i]);
+        }
         objects = [];
     }
 
@@ -18,7 +21,7 @@ var World = (function() {
         _.each(objects, callback);
     };
 
-    return {"add": add, "del": del, "all": all};
+    return {"add": add, "del": del, "all": all, "clear":clear};
 }());
 
 setInterval(function() {

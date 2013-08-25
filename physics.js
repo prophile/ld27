@@ -23,6 +23,7 @@ var Physics = function() {
         var b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
         var b2Settings = Box2D.Common.b2Settings;
         this.toRemove = [];
+        this.boxesRemoved = 0;
 
 
         b2Settings.b2_maxTranslation = 10000.0;
@@ -58,7 +59,6 @@ var Physics = function() {
                            function(fric, rest) {
                 fix.SetFriction(fric);
                 fix.SetRestitution(rest);
-                console.log("New PP", cls, fric, rest);
             });
             if (!massless) {
                 Constants.get(cls + '_density',
@@ -94,8 +94,6 @@ var Physics = function() {
             var e = new Entity();
             body.SetUserData({tag: "BLOCK", entity:e});
             Constants.get([cls + "_image", cls + "_scale"], function(value, scale) {
-                console.log("value");
-                console.log(value);
                 var beeTexture = PIXI.Texture.fromImage(value, true);
                 var beeSprite = new PIXI.Sprite(beeTexture);
 
@@ -117,7 +115,6 @@ var Physics = function() {
                         e({id: "setVerticalSpeed", speed: x});
                     });
                 }
-                console.log("here");
                 World.add(e);
             });
         };
@@ -149,6 +146,7 @@ var Physics = function() {
                 var body = that.toRemove[i];
                 that.world.DestroyBody(body);
                 World.del(body.GetUserData().entity);
+                that.boxesRemoved += 1;
             }
             that.world.ClearForces();
         };
