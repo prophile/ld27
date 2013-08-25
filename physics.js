@@ -37,14 +37,10 @@ var Physics = function() {
             return Math.min(r1, r2);
         };
 
-        var turnRate = 0;
+        var turnRate = Constants.k('world_rotation_rate');
         var targetRotation = 0;
         var rotation = 0;
         var gravity = 0.00001;
-
-        Constants.get("world_rotation_rate", function(value) {
-            turnRate = value;
-        });
 
 
         this.world = new b2World(newGravity(), false);
@@ -52,35 +48,24 @@ var Physics = function() {
 
         var debugDraw = newDebugDraw();
 
-        Constants.get("debug_physics", function(value) {
-            if (value) {
-                that.world.SetDebugDraw(debugDraw);
-            } else {
-                that.world.SetDebugDraw(null);
-                debugDraw.m_sprite.graphics.clear();
-            }
-        });
+        if (Constants.k('debug_physics')) {
+            that.world.SetDebugDraw(debugDraw);
+        } else {
+            that.world.SetDebugDraw(null);
+            debugDraw.m_sprite.graphics.clear();
+        }
 
-        Constants.get("world_gravity", function(value) {
-            gravity = value;
-            that.world.SetGravity(newGravity());
-        });
+        gravity = Constants.k('world_gravity');
+        that.world.SetGravity(newGravity());
 
         var setPhysicalProperties = function(cls, fix, massless) {
             if (massless === undefined) {
                 massless = false;
             }
-            Constants.get([cls + '_friction',
-                    cls + '_restitution'],
-                    function(fric, rest) {
-                        fix.SetFriction(fric);
-                        fix.SetRestitution(rest);
-                    });
+            fix.SetFriction(Constants.k(cls + '_friction'));
+            fix.SetRestitution(Constants.k(cls + '_restitution'));
             if (!massless) {
-                Constants.get(cls + '_density',
-                        function(density) {
-                            fix.SetDensity(density);
-                        });
+                fix.SetDensity(Constants.k(cls + '_density'));
             }
         };
 
@@ -94,84 +79,81 @@ var Physics = function() {
             fd.restitution = 0.1;
             console.log("here");
 
-            Constants.get("block_bad_prob", function(value) {
-                var killsYou = Math.random() < value;
-                console.log(killsYou);
-                if (cls == "block" && killsYou) {
-                    console.log("lol");
-                    cls = "block_bad";
-                }
+            badBlockChance = Constants.k('block_bad_prob');
+            var killsYou = Math.random() < badBlockChance;
+            console.log(killsYou);
+            if (cls == "block" && killsYou) {
+                console.log("lol");
+                cls = "block_bad";
+            }
 
+            value = Constants.k(cls + '_image');
+            scale = Constants.k(cls + '_scale');
+            flags = Constants.k(cls + '_flags');
+            size = Constants.k('game_size');
+            dist = Constants.k('mousehole_spawn_distance');
+            randomness = Constants.k('spawn_randomness');
+            var bodyDef                  = new b2BodyDef();
+            bodyDef.type                 = b2Body.b2_dynamicBody;
+            if (/c/.exec(flags)) {
+                fd.shape.SetAsBox(1, 2.5);
+            } else {
+                fd.shape.SetAsBox(1, 1);
+            }
+            var radius = dist;
+            var gravVec = newGravity()
+            gravVec.NegativeSelf();
+            gravVec.Normalize();
+            gravVec.Multiply(radius);
 
-                Constants.get([cls + "_image", cls + "_scale", cls + '_flags', "game_size", "mousehole_spawn_distance", "spawn_randomness"],
-                  function(value, scale, flags, size, dist, randomness) {
-                    var bodyDef                  = new b2BodyDef();
-                    bodyDef.type                 = b2Body.b2_dynamicBody;
-                    if (/c/.exec(flags)) {
-                        fd.shape.SetAsBox(1, 2.5);
-                    } else {
-                        fd.shape.SetAsBox(1, 1);
-                    }
-                    var radius = dist;
-                    var gravVec = newGravity()
-                    gravVec.NegativeSelf();
-                    gravVec.Normalize();
-                    gravVec.Multiply(radius);
+            var x = size/2+gravVec.x+Math.random()*randomness-randomness/2;
+            var y = size/2+gravVec.y+Math.random()*randomness-randomness/2;
 
-                    var x = size/2+gravVec.x+Math.random()*randomness-randomness/2;
-                    var y = size/2+gravVec.y+Math.random()*randomness-randomness/2;
+            bodyDef.position.x           = x/PIXELS_PER_METER;
+            bodyDef.position.y           = y/PIXELS_PER_METER;
+            bodyDef.allowSleep           = false;
+            if (/f/.exec(flags)) {
+                bodyDef.fixedRotation = true;
+            }
+            var body = that.world.CreateBody(bodyDef);
+            var fix = body.CreateFixture(fd);
+            setPhysicalProperties(cls, fix);
 
-                    bodyDef.position.x           = x/PIXELS_PER_METER;
-                    bodyDef.position.y           = y/PIXELS_PER_METER;
-                    bodyDef.allowSleep           = false;
-                    if (/f/.exec(flags)) {
-                        bodyDef.fixedRotation = true;
-                    }
-                    var body = that.world.CreateBody(bodyDef);
-                    var fix = body.CreateFixture(fd);
-                    setPhysicalProperties(cls, fix);
+            var e = new Entity();
+            body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":false});
+            var beeTexture = PIXI.Texture.fromImage(value, true);
+            var beeSprite = new PIXI.Sprite(beeTexture);
 
-                    var e = new Entity();
-                    body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":false});
-                    var beeTexture = PIXI.Texture.fromImage(value, true);
-                    var beeSprite = new PIXI.Sprite(beeTexture);
+            if (/c/.exec(flags)) {
+                beeSprite.anchor.x = 0.42;
+            } else {
+                beeSprite.anchor.x = 0.5;
+            }
+            beeSprite.anchor.y = 0.5;
 
-                    if (/c/.exec(flags)) {
-                        beeSprite.anchor.x = 0.42;
-                    } else {
-                        beeSprite.anchor.x = 0.5;
-                    }
-                    beeSprite.anchor.y = 0.5;
+            beeSprite.scale.x = scale;
+            beeSprite.scale.y = scale;
 
-                    beeSprite.scale.x = scale;
-                    beeSprite.scale.y = scale;
-
-                    e.addComponent(SpriteComponent(stage, beeSprite));
-                    e.addComponent(PhysicsComponent(body));
-                    if (/c/.exec(flags)) {
-                        body.SetUserData({tag: "PLAYER", entity:e});
-                        e.addComponent(MovableComponent());
-                        Constants.get("movement_speed", function(x) {
-                            e({id: "setMovementSpeed", speed: x});
-                        });
-                        Constants.get("movement_vertical", function(x) {
-                            e({id: "setVerticalSpeed", speed: x});
-                        });
-                        e.addComponent(GrabberComponent());
-                        e.addComponent(DebounceComponent('jump', 'jump_cooldown'));
-                    }
-                    if (/f/.exec(flags)) {
-                        e.addComponent(RotateWithWorldComponent());
-                    }
-                    if (/d/.exec(flags)) {
-                        body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":true});
-                    }
-                    if (/g/.exec(flags)) {
-                        e.addComponent(GrabbableComponent());
-                    }
-                    World.add(e);
-                });
-            });
+            e.addComponent(SpriteComponent(stage, beeSprite));
+            e.addComponent(PhysicsComponent(body));
+            if (/c/.exec(flags)) {
+                body.SetUserData({tag: "PLAYER", entity:e});
+                e.addComponent(MovableComponent());
+                e({id: "setMovementSpeed", speed: Constants.k('movement_speed')});
+                e({id: "setVerticalSpeed", speed: Constants.k('movement_vertical')});
+                e.addComponent(GrabberComponent());
+                e.addComponent(DebounceComponent('jump', 'jump_cooldown'));
+            }
+            if (/f/.exec(flags)) {
+                e.addComponent(RotateWithWorldComponent());
+            }
+            if (/d/.exec(flags)) {
+                body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":true});
+            }
+            if (/g/.exec(flags)) {
+                e.addComponent(GrabbableComponent());
+            }
+            World.add(e);
         };
 
         this.draw = function(scaleFactor) {
@@ -179,15 +161,6 @@ var Physics = function() {
             that.world.SetDebugDraw(newDebugDraw());
             that.world.DrawDebugData();
         };
-
-        var velocityIterations = 12, positionIterations = 12;
-
-        Constants.get(["physics_velocityIterations",
-                "physics_positionIterations"],
-                function(x, y) {
-                    velocityIterations = x;
-                    positionIterations = y;
-                });
 
         var doneRotating = true
         this.update = function(callback) {
@@ -207,7 +180,7 @@ var Physics = function() {
             }
 
             that.toRemove = [];
-            that.world.Step(1/60, velocityIterations, positionIterations);
+            that.world.Step(1/60, Constants.k('physics_velocityIterations'), Constants.k('physics_positionIterations'));
             for (var i = 0; i < that.toRemove.length; i++) {
                 var body = that.toRemove[i];
                 that.world.DestroyBody(body);
@@ -349,39 +322,41 @@ var Physics = function() {
         }
 
         this.newGoal = function(gameSize, stage) {
-            Constants.get(["goal_width", "goal_height", "goal_image", "goal_scale"], function(width, height, image, scale) {
-                //floor
-                var floorDef                 = new b2FixtureDef;
-                floorDef.shape               = new b2PolygonShape();
-                floorDef.isSensor            = true;
-                //floorDef.friction            = 0.2;
-                //floorDef.restitution         = 0.7;
-                floorDef.shape.SetAsBox(width/2, height/2);
+            width = Constants.k('goal_width');
+            height = Constants.k('goal_height');
+            image = Constants.k('goal_image');
+            scale = Constants.k('goal_scale');
+            //floor
+            var floorDef                 = new b2FixtureDef;
+            floorDef.shape               = new b2PolygonShape();
+            floorDef.isSensor            = true;
+            //floorDef.friction            = 0.2;
+            //floorDef.restitution         = 0.7;
+            floorDef.shape.SetAsBox(width/2, height/2);
 
-                var floorBodyDef                  = new b2BodyDef();
-                floorBodyDef.type                 = b2Body.b2_staticBody;
-                floorBodyDef.position.x           = gameSize*0.5/PIXELS_PER_METER;
-                floorBodyDef.position.y           = gameSize*0.5/PIXELS_PER_METER;
-                var body = that.world.CreateBody(floorBodyDef);
+            var floorBodyDef                  = new b2BodyDef();
+            floorBodyDef.type                 = b2Body.b2_staticBody;
+            floorBodyDef.position.x           = gameSize*0.5/PIXELS_PER_METER;
+            floorBodyDef.position.y           = gameSize*0.5/PIXELS_PER_METER;
+            var body = that.world.CreateBody(floorBodyDef);
 
-                body.SetUserData({tag: "GOAL"});
-                var fix = body.CreateFixture(floorDef);
+            body.SetUserData({tag: "GOAL"});
+            var fix = body.CreateFixture(floorDef);
 
-                var e = new Entity();
+            var e = new Entity();
 
-                var beeTexture = PIXI.Texture.fromImage(image, true);
-                var beeSprite = new PIXI.Sprite(beeTexture);
+            var beeTexture = PIXI.Texture.fromImage(image, true);
+            var beeSprite = new PIXI.Sprite(beeTexture);
 
-                beeSprite.anchor.x = 0.5;
-                beeSprite.anchor.y = 0.5;
-                beeSprite.position.x = gameSize*0.5;
-                beeSprite.position.y = gameSize*0.5;
+            beeSprite.anchor.x = 0.5;
+            beeSprite.anchor.y = 0.5;
+            beeSprite.position.x = gameSize*0.5;
+            beeSprite.position.y = gameSize*0.5;
 
-                beeSprite.scale.x = scale;
-                beeSprite.scale.y = scale;
-                e.addComponent(SpriteComponent(stage, beeSprite));
-                World.add(e);
-            });
+            beeSprite.scale.x = scale;
+            beeSprite.scale.y = scale;
+            e.addComponent(SpriteComponent(stage, beeSprite));
+            World.add(e);
         }
 
         this.rotate = rotate;

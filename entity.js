@@ -264,11 +264,7 @@ var GrabbableComponent = function() {
 
 var DebounceComponent = function(messageID, intervalConstant) {
     var lastHeard = Number.NEGATIVE_INFINITY;
-    var spacing = 120;
-    Constants.get(intervalConstant, function(x) {
-        console.log("Cooldown on " + messageID + ": " + x);
-        spacing = x;
-    });
+    var spacing = Constants.k(intervalConstant);
     return function(message) {
         if (message.id == messageID) {
             var currentTime = unixTime();
@@ -342,9 +338,8 @@ var Bee = function(stage) {
     entity.addComponent(SpriteComponent(stage, beeSprite));
     entity.addComponent(RollComponent());
 
-    Constants.get("debug_beeRotationRate", function(x) {
-        entity({"id": "rotationRate", "rotationRate": x});
-    });
+    entity({"id": rotationRate,
+            "rotationRate": Constants.k("debug_beeRotationRate")});
 
     entity({id: "position", x: 200, y: 200});
 

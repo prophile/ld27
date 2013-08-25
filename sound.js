@@ -6,9 +6,7 @@ var Sound = (function() {
     var musicLoaded = new Bacon.Bus();
 
     Constants.wait(function() {
-        Constants.get('music_enable', function(enabled) {
-            musicEnabled.push(enabled);
-        });
+        enabled = Constants.k('music_enable');
     });
 
     var music = new Howl({urls: [MUSIC_SOURCE],

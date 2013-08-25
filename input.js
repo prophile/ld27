@@ -24,17 +24,16 @@ var Input = (function() {
     var releases = new Bacon.Bus();
     var mapping = [];
     Constants.wait(function() {
-        Constants.getAll(function(x) {
-            mapping = [];
-            _.each(x, function(binding, key) {
-                var match = /^key_(.*)/.exec(key);
-                if (match) {
-                    var command = match[1];
-                    console.log(match);
-                    var matcher = recogniser(binding);
-                    mapping.push([matcher, command]);
-                }
-            });
+        x = Constants.allK();
+        mapping = [];
+        _.each(x, function(binding, key) {
+            var match = /^key_(.*)/.exec(key);
+            if (match) {
+                var command = match[1];
+                console.log(match);
+                var matcher = recogniser(binding);
+                mapping.push([matcher, command]);
+            }
         });
     });
     var propogateEvent = function(evt, bus) {

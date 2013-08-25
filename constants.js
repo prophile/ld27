@@ -16,9 +16,13 @@ Constants = (function() {
         }
     };
 
-    var getAll = function(callback) {
+    var allK = function() {
         checkLoaded();
-        callback(constantMap);
+        return constantMap;
+    };
+
+    var getAll = function(callback) {
+        callback(allK());
     };
 
     var reload = function() {
@@ -62,14 +66,19 @@ Constants = (function() {
         });
     };
 
+    var k = function(key) {
+        checkLoaded();
+        return constantMap[key];
+    };
+
     $(_.defer(reload));
 
     var wait = function(callback) {
         constantsLoaded.done(callback);
     };
 
-    return {'getAll': getAll,
-            'get': get,
+    return {'k': k,
+            'allK': allK,
             'wait': wait};
 
 }());

@@ -87,65 +87,58 @@ var Game = function() {
         };
 
         this.update = function() {
-            Constants.get("target_cheeses", function(value) {
-                $("#removed").text("Boxes removed: " + physics.boxesRemoved + "/" + value);
-                if (physics.boxesRemoved >= value) {
-                    state = END_SCREEN;
-                }
-            });
+            value = Constants.k('target_cheeses');
+            $("#removed").text("Boxes removed: " + physics.boxesRemoved + "/" + value);
+            if (physics.boxesRemoved >= value) {
+                state = END_SCREEN;
+            }
             spinIfNecessary();
             physics.update(function() {
                 lastSpin = unixTime();
                 spawnBlocks();
-
             });
             $("#container").rotate(physics.getRotation());
         };
 
         function spinIfNecessary() {
-            Constants.get("spin_interval", function(value) {
-                if (unixTime() - lastSpin > value) {
-                    spin();
-                }
-            });
+            value = Constants.k('spin_interval');
+            if (unixTime() - lastSpin > value) {
+                spin();
+            }
         }
 
         function spawnBlocks() {
-            Constants.get(["blocks_to_spawn", "block_spawn_delay_ms"],
-                          function(blocksToSpawn, blockSpawnDelayMs) {
-                lastSpawn = unixTime();
-                var block_count = 0;
-                var timer = setInterval(function() {
-                    Constants.get("debug_noSpawnBlocks", function(dis) {
-                        if (dis)
-                            return;
-                        physics.newBlock("block", container);
-                        block_count++;
-                        if (block_count == blocksToSpawn) {
-                            clearInterval(timer);
-                        }
-                    });
-                }, blockSpawnDelayMs);
-            });
+            blocksToSpawn = Constants.k('blocks_to_spawn');
+            blockSpawnDelayMs = Constants.k('block_spawn_delay_ms');
+            if (Constants.k('debug_noSpawnBlocks'))
+                return;
+            lastSpawn = unixTime();
+            var block_count = 0;
+            var timer = setInterval(function() {
+                physics.newBlock("block", container);
+                block_count++;
+                if (block_count == blocksToSpawn) {
+                    clearInterval(timer);
+                }
+            }, blockSpawnDelayMs);
         }
 
         function spin() {
             lastSpin = unixTime();
-            Constants.get(["minimum_rotation", "maximum_rotation", "debug_noSpin"],
-                          function(min, max, noSpin) {
-                if (noSpin)
-                    return;
-                var direction = Math.ceil(Math.random());
-                if (direction == 0) {
-                    direction = -1;
-                }
+            min = Constants.k('minimum_rotation');
+            max = Constants.k('maximum_rotation');
+            if (Constants.k('debug_noSpin'))
+                return;
+            var direction = Math.ceil(Math.random());
+            if (direction == 0) {
+                direction = -1;
+            }
 
-                var range = max - min;
-                var angle = min + Math.random() * range;
-                console.log(angle);
-                console.log(range);
-                physics.setTargetRotation(angle + physics.getRotation());
-            });
+            var range = max - min;
+            var angle = min + Math.random() * range;
+            console.log(angle);
+            console.log(range);
+            physics.setTargetRotation(angle + physics.getRotation());
         }
 
         this.render = function() {
@@ -167,17 +160,16 @@ var Game = function() {
             stage.position.x = gameWidth/2;
             stage.position.y = gameHeight/2;
             stage.addChild(container);
-            Constants.get("clock_face", function(value) {
-                var clock = new Entity();
-                console.log(value);
-                var beeTexture = PIXI.Texture.fromImage(value, true);
-                var beeSprite = new PIXI.Sprite(beeTexture);
-                beeSprite.width = gameWidth;
-                beeSprite.height = gameHeight;
-                clock.addComponent(SpriteComponent(container, beeSprite));
-                World.add(clock);
-                physics.newGoal(gameWidth, container);
-            });
+            value = Constants.k('clock_face');
+            var clock = new Entity();
+            console.log(value);
+            var beeTexture = PIXI.Texture.fromImage(value, true);
+            var beeSprite = new PIXI.Sprite(beeTexture);
+            beeSprite.width = gameWidth;
+            beeSprite.height = gameHeight;
+            clock.addComponent(SpriteComponent(container, beeSprite));
+            World.add(clock);
+            physics.newGoal(gameWidth, container);
             requestAnimFrame(that.step);
 
             titleStage = new PIXI.Stage(0xFFFF00);
