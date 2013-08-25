@@ -7,7 +7,7 @@ World = do ->
   del: (object) ->
     object.doDetach()
     objects = obj for obj in objects when obj isnt object
-  all: (objects, callback) ->
+  all: (callback) ->
     callback(obj) for obj in objects
   select: (callback) ->
     [best, bestScore] = [null, 0]
@@ -17,6 +17,11 @@ World = do ->
         [best, bestScore] = [obj, result]
     best
 
+$ ->
+  tickAll = ->
+    World.all (object) ->
+      object.doTick()
+  setInterval tickAll, 1000 / 60
 
 class BaseEntity
   doJump: ->
@@ -54,6 +59,12 @@ class EntityAdapter
   hasCargo: -> @next.hasCargo()
   isPlayer: -> @next.isPlayer()
   getFacing: -> @next.getFacing()
+
+class FixedLocationAdapter extends EntityAdapter
+  constructor: (@x, @y, @rotation, @next) ->
+
+  getPosition: -> x: @x, y: @y
+  getRotation: -> @rotation
 
 class PhysicsEntityAdapter extends EntityAdapter
   constructor: (@body, @next) ->
@@ -93,6 +104,7 @@ class LateralMovementAdapter extends EntityAdapter
     baseSpeed -= 1 if @left
     baseSpeed += 1 if @right
     baseSpeed *= Constants.k('movement_speed')
+    console.log baseSpeed
     physics = body.GetWorld().UserData
     [x_, y_] = physics.rotate([baseSpeed, 0])
     body.ApplyForce(new Box2D.Common.Math.b2Vec2(x_, y_),
@@ -108,6 +120,7 @@ class JumpAdapter extends EntityAdapter
     body = @getBody()
     physics = body.GetWorld().UserData
     [x_, y_] = physics.rotate([0, -jumpHeight])
+    console.log(x_, y_)
     body.ApplyImpulse(new Box2D.Common.Math.b2Vec2(x_, y_),
                       body.GetWorldCenter())
     @next.doJump()
@@ -180,7 +193,7 @@ class RotateWithWorldAdapter extends EntityAdapter
     body = @getBody()
     physics = body.GetWorld().UserData
     rotation = physics.getRotation()
-    body.SetAngle(rot * -(Math.PI / 180))
+    body.SetAngle(rotation * -(Math.PI / 180))
     @next.doTick()
 
 class SpriteAdapter extends EntityAdapter
@@ -200,6 +213,21 @@ class SpriteAdapter extends EntityAdapter
     @stage.removeChild @sprite
     @next.doDetach()
 
+class DebugLateralMovementAdapter extends EntityAdapter
+  doMoveLeft: (en) ->
+    console.log "Moving left" if en
+    console.log "Not moving left" if not en
+    @next.doMoveLeft(en)
+
+  doMoveRight: (en) ->
+    console.log "Moving right" if en
+    console.log "Not moving right" if not en
+    @next.doMoveRight(en)
+
+  doJump: ->
+    console.log "Jumping."
+    @next.doJump()
+
 @World = World
 @BaseEntity = BaseEntity
 @PhysicsEntityAdapter = PhysicsEntityAdapter
@@ -213,4 +241,6 @@ class SpriteAdapter extends EntityAdapter
 @RotateWithWorldAdapter = RotateWithWorldAdapter
 @SpriteAdapter = SpriteAdapter
 @JumpAdapter = JumpAdapter
+@DebugLateralMovementAdapter = DebugLateralMovementAdapter
+@FixedLocationAdapter = FixedLocationAdapter
 

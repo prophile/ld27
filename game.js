@@ -163,6 +163,7 @@ var Game = function() {
             var beeSprite = new PIXI.Sprite(beeTexture);
             beeSprite.width = gameWidth;
             beeSprite.height = gameHeight;
+            clock = new FixedLocationAdapter(0, 0, 0, clock)
             clock = new SpriteAdapter(container, beeSprite, clock);
             World.add(clock);
             physics.newGoal(gameWidth, container);
