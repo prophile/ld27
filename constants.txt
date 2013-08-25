@@ -30,4 +30,10 @@ player_friction       -- friction coefficient of the player, 0 < x < 1
 player_density        -- density of the player, in kg/m^2
 wall_friction         -- friction coefficent of the wall, 0 < x < 1
 wall_restitution      -- restitution (bounciness) of the wall, 0 < x < 1
+lift_frequency        -- oscillation frequency for the joint with picked up objects, in Hz
+lift_damping          -- damping ratio for the picked up object joint (1 = critically damped)
+target_cheeses        -- required number of cheeses to win the game
+goal_width            -- width of the goal, in metres
+goal_height           -- height of the goal, in metres
+debug_physics         -- display all hitboxes
 

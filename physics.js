@@ -29,6 +29,13 @@ var Physics = function() {
 
         b2Settings.b2_maxTranslation = 10000.0;
         b2Settings.b2_maxTranslationSquared = 10000.0*10000.0;
+        b2Settings.b2MixRestitution = function(r1, r2) {
+            if (r1 === undefined)
+                r1 = 0;
+            if (r2 === undefined)
+                r2 = 0;
+            return Math.min(r1, r2);
+        };
 
         var turnRate = 0;
         var targetRotation = 0;
@@ -40,10 +47,20 @@ var Physics = function() {
         });
 
 
-        var debugDraw = newDebugDraw();
-
         this.world = new b2World(newGravity(), false);
         this.world.UserData = this;
+
+        var debugDraw = newDebugDraw();
+
+        Constants.get("debug_physics", function(value) {
+            if (value) {
+                that.world.SetDebugDraw(debugDraw);
+            } else {
+                that.world.SetDebugDraw(null);
+                debugDraw.m_sprite.graphics.clear();
+            }
+        });
+
         Constants.get("world_gravity", function(value) {
             gravity = value;
             that.world.SetGravity(newGravity());
