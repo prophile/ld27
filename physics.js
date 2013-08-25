@@ -228,21 +228,26 @@ var Physics = function() {
         }
 
         function newPlatform(x, y, width, height, orientation) {
+            var orientationRadians  = orientation * (Math.PI/180);
             var platformDef         = new b2FixtureDef;
             platformDef.shape       = new b2PolygonShape();
             platformDef.friction    = 0.2;
             platformDef.restitution = 0.7;
-            platformDef.shape.SetAsOrientedBox(width/2, height/2, new b2Vec2(0, 0), rotation * Math.PI/180);
+            platformDef.shape.SetAsOrientedBox(width/2, height/2, new b2Vec2(0, 0), orientationRadians);
 
             var platformBodyDef    = new b2BodyDef();
             platformBodyDef.type   = b2Body.b2_staticBody;
             platformBodyDef.position.x = x/PIXELS_PER_METER;
             platformBodyDef.position.y = y/PIXELS_PER_METER;
             var body = that.world.CreateBody(platformBodyDef);
+            body.SetAngle(orientationRadians);
+
             body.SetUserData({'tag': 'PLATFORM'});
 
             var fix = body.CreateFixture(platformDef);
             setPhysicalProperties('platform', fix, true);
+
+            console.log("New platform created");
         }
 
         function addWall(x, y, width, height, rotation, offset1, offset2) {
@@ -303,6 +308,23 @@ var Physics = function() {
                             if (unixTime() - data1.spawnTime > 5) {
                                 that.toRemove.push(contact.GetFixtureA().GetBody());
                             }
+                        }
+                        var platformCollision = function(platformFixture, entityFixture) {
+                            var platformBody = platformFixture.GetBody();
+                            var platformAngle = platformBody.GetAngle();
+                            var body = entityFixture.GetBody();
+                            var angle = body.GetAngle();
+                            var relativeCos = Math.cos(angle - platformAngle);
+                            if (relativeCos < 0) {
+                                console.log("platform pass through");
+                                contact.SetEnabled(false);
+                            }
+                        };
+                        if (data1.tag == "PLATFORM") {
+                            platformCollision(contact.GetFixtureA(), contact.GetFixtureB());
+                        }
+                        if (data2.tag == "PLATFORM") {
+                            platformCollision(contact.GetFixtureB(), contact.GetFixtureA());
                         }
                     }
                 },
