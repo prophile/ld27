@@ -7,11 +7,18 @@ Constants = (function() {
         'local.json'
     ];
 
-    var gotConstants = new Bacon.Bus();
-    var constants = gotConstants.toProperty().skipDuplicates(_.isEqual);
+    var constantsLoaded = $.Deferred();
+    var constantMap = {};
+
+    var checkLoaded = function() {
+        if (constantsLoaded.state() != 'resolved') {
+            throw "Constants not loaded.";
+        }
+    };
 
     var getAll = function(callback) {
-        constants.onValue(callback);
+        checkLoaded();
+        callback(constantMap);
     };
 
     var reload = function() {
@@ -32,42 +39,38 @@ Constants = (function() {
                             'integer': parseFloat,
                             'boolean': function(x) { return x; }};
         rawConstantFiles.done(function() {
-            var actualConstants = {};
             for (var i = 0; i < arguments.length; ++i) {
                 var value = arguments[i];
                 if (typeof value === "string") {
                     value = JSON.parse(value);
                 }
                 _.each(value['constants'], function(tuple) {
-                    actualConstants[tuple.name] = typeDecoders[tuple.type](tuple.value);
+                    constantMap[tuple.name] = typeDecoders[tuple.type](tuple.value);
                 });
             }
-            gotConstants.push(actualConstants);
+            constantsLoaded.resolve();
         });
     };
 
     var get = function(keys, callback) {
-        if (typeof keys === "string") {
-            keys = [keys];
-        }
-        var newStream = constants.map(function(x) {
-            return _.map(keys, function(y) { return x[y]; });
-        }).skipDuplicates(_.isEqual);
-        newStream.onValues(callback);
+        getAll(function(all) {
+            if (typeof keys === "string") {
+                keys = [keys];
+            }
+            var values = _.map(keys, function(k) { return all[k]; });
+            callback.apply(null, values);
+        });
     };
-
-    constants.onValue(function() {
-        console.log("Constants loaded.");
-    });
 
     $(_.defer(reload));
 
-    // reload periodically, for dev
-    setInterval(reload, 2500);
+    var wait = function(callback) {
+        constantsLoaded.done(callback);
+    };
 
     return {'getAll': getAll,
             'get': get,
-            'reload': reload};
+            'wait': wait};
 
 }());
 

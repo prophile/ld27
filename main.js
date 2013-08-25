@@ -13,10 +13,12 @@ jQuery.fn.resetRotate = function(degrees) {
 
 
 $(function() {
-    Constants.get("game_size", function(value) {
-        var game = new Game(value);
-        game.setupCanvas();
-        game.setupGame();
+    Constants.wait(function() {
+        Constants.get("game_size", function(value) {
+            var game = new Game(value);
+            game.setupCanvas();
+            game.setupGame();
+        });
     });
 });
 
