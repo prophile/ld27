@@ -51,29 +51,25 @@ var Game = function() {
             });
             pixiSetup();
             soundSetup();
+            Input.press("title_to_game", function() {
+                if (state === TITLE_SCREEN) {
+                    console.log("pushed");
+                    state = GAME;
+                } else if (state === END_SCREEN) {
+                    location.reload();
+                }
+            });
         };
 
 
         this.step = function() {
             requestAnimFrame(that.step);
             if (state == TITLE_SCREEN) {
-                console.log("title");
-                Input.press("title_to_game", function() {
-                    if (state == TITLE_SCREEN) {
-                        console.log("pushed");
-                        state = GAME;
-                    }
-                });
                 that.draw_title_screen();
             } else if (state == GAME) {
                 that.update();
                 that.render();
             } else {
-                Input.press("title_to_game", function() {
-                    if (state == END_SCREEN) {
-                        location.reload();
-                    }
-                });
                 that.draw_end_screen();
             }
         };

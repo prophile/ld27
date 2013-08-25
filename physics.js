@@ -140,7 +140,9 @@ var Physics = function() {
                 body.SetUserData({tag: "PLAYER", entity:e});
                 e.addComponent(MovableComponent());
                 e({id: "setMovementSpeed", speed: Constants.k('movement_speed')});
-                e({id: "setVerticalSpeed", speed: Constants.k('movement_vertical')});
+                e({id: "setVerticalSpeed",
+                   unencumbered: Constants.k('movement_vertical'),
+                   cargo: Constants.k('movement_vertical_cargo')});
                 e.addComponent(GrabberComponent());
                 e.addComponent(DebounceComponent('jump', 'jump_cooldown'));
             }

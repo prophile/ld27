@@ -161,13 +161,23 @@ var PhysicsComponent = function(body) {
 var MovableComponent = function() {
     var movement = [0, 0];
     var speed = 0.0;
-    var verticalSpeed = 0.0;
+    var verticalSpeedU = 0.0;
+    var verticalSpeedC = 0.0;
+    var hasCargo = false;
     return function(message) {
         var that = this;
+        if (message.id === "gotCargo") {
+            hasCargo = true;
+        }
+        if (message.id === "releaseCargo") {
+            hasCargo = false;
+        }
         if (message.id === "jump") {
+            var speed = hasCargo ? verticalSpeedC : verticalSpeedU;
+            console.log("jump at ", speed);
             that({id: "applyImpulse",
                   x: 0,
-                  y: -verticalSpeed});
+                  y: -speed});
         }
         if (message.id === "attach") {
             var left = false, right = false;
@@ -198,7 +208,8 @@ var MovableComponent = function() {
             speed = message.speed;
         }
         if (message.id === "setVerticalSpeed") {
-            verticalSpeed = message.speed;
+            verticalSpeedU = message.unemcumbered;
+            verticalSpeedC = message.cargo;
         }
         if (message.id === "updatePhysics") {
             phys = message.body.GetWorld().UserData;
@@ -225,14 +236,17 @@ var GrabberComponent = function() {
                 attached("removeWeldJoint");
                 attached({id: "ungrabbed", sender: this});
                 attached = null;
+                this("releaseCargo");
             } else {
                 var target = World.select("canGrab", function(pos) {
                     return Math.abs(lastPosition[0]-pos[0]) +
                            Math.abs(lastPosition[1]-pos[1]);
                 });
-                if (target)
+                if (target) {
+                    this("gotCargo");
                     target({id: "grabbed",
                             sender: this});
+                }
             }
         }
         if (message.id === "attachLift") {
