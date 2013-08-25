@@ -163,9 +163,14 @@ var MovableComponent = function() {
     var speed = 0.0;
     var verticalSpeed = 0.0;
     return function(message) {
+        var that = this;
+        if (message.id === "jump") {
+            that({id: "applyImpulse",
+                  x: 0,
+                  y: -verticalSpeed});
+        }
         if (message.id === "attach") {
             var left = false, right = false;
-            var that = this;
             var recompute = function() {
                 var x = 0;
                 if (left)
@@ -181,9 +186,7 @@ var MovableComponent = function() {
                 movement[1] = 0;
             };
             Input.press('move_up', function(x) {
-                that({id: "applyImpulse",
-                      x: 0,
-                      y: -verticalSpeed});
+                that("jump");
             });
             Input.press('gravityGun', function() {
                 that("grab");
