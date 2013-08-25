@@ -102,6 +102,15 @@ var Physics = function() {
             that.world.DrawDebugData();
         };
 
+        var velocityIterations = 12, positionIterations = 12;
+
+        Constants.get(["physics_velocityIterations",
+                       "physics_positionIterations"],
+                       function(x, y) {
+                           velocityIterations = x;
+                           positionIterations = y;
+                       });
+
         this.update = function() {
             if (Math.abs(targetRotation - rotation) > turnRate) {
                 function sign(x) { return x ? x < 0 ? -1 : 1 : 0; }
@@ -110,7 +119,7 @@ var Physics = function() {
                 that.world.SetGravity(newGravity());
             }
 
-            that.world.Step(1/60, 10, 10);
+            that.world.Step(1/60, velocityIterations, positionIterations);
             that.world.ClearForces();
         };
 
