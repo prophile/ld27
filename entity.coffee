@@ -70,7 +70,7 @@ class PhysicsEntityAdapter extends EntityAdapter
   constructor: (@body, @next) ->
 
   getBody: -> @body
-  getPosition: -> @body.GetWorldCentre()
+  getPosition: -> @body.GetWorldCenter()
   getRotation: -> @body.GetAngle()
 
 class ControlAdapter extends EntityAdapter
@@ -201,8 +201,11 @@ class SpriteAdapter extends EntityAdapter
 
   doTick: ->
     pos = @getPosition()
-    @sprite.position = new PIXI.Point(pos.x, pos.y)
+    @sprite.position = new PIXI.Point(pos.x * PIXELS_PER_METER,
+                                      pos.y * PIXELS_PER_METER)
     @sprite.rotation = @getRotation()
+    console.log("Sprite")
+    console.log(pos)
     @next.doTick()
 
   doAttach: ->

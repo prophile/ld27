@@ -134,8 +134,8 @@ var Physics = function() {
             beeSprite.scale.x = scale;
             beeSprite.scale.y = scale;
 
-            e = new SpriteAdapter(stage, beeSprite, e);
             e = new PhysicsEntityAdapter(body, e)
+            e = new SpriteAdapter(stage, beeSprite, e);
             if (/c/.exec(flags)) {
                 body.SetUserData({tag: "PLAYER", entity:e});
                 e = new LateralMovementAdapter(e);
@@ -356,7 +356,9 @@ var Physics = function() {
 
             beeSprite.scale.x = scale;
             beeSprite.scale.y = scale;
-            e = new FixedLocationAdapter(gameSize*0.5, gameSize*0.5, 0, e)
+            e = new FixedLocationAdapter(gameSize*0.5 / PIXELS_PER_METER,
+                                         gameSize*0.5 / PIXELS_PER_METER,
+                                         0, e)
             e = new SpriteAdapter(stage, beeSprite, e);
             World.add(e);
         }
