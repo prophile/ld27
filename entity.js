@@ -108,6 +108,7 @@ var Entity = function(name) {
 };
 
 var PhysicsComponent = function(body) {
+    var currentJoint = null;
     return function(message) {
         if (message.id === "update") {
             var position = body.GetTransform().position;
@@ -146,8 +147,13 @@ var PhysicsComponent = function(body) {
                                         0.5*(srcCentre.y + destCentre.y));
                 var def = new Box2D.Dynamics.Joints.b2WeldJointDef;
                 def.Initialize(sourceBody, destBody, anchor);
-                var j = sourceBody.GetWorld().CreateJoint(def);
+                currentJoint = sourceBody.GetWorld().CreateJoint(def);
             }
+        }
+        if (message.id === "removeWeldJoint" && currentJoint !== null) {
+            body.GetWorld().DestroyJoint(currentJoint);
+            currentJoint = null;
+            console.log("weld joint removed");
         }
     };
 };
@@ -212,8 +218,8 @@ var GrabberComponent = function() {
         }
         if (message.id === "grab") {
             if (attached !== null) {
-                this({id: "removeWeldJoint",
-                      to: attached});
+                this("removeWeldJoint");
+                attached("removeWeldJoint");
                 attached({id: "ungrabbed", sender: this});
                 attached = null;
             } else {
