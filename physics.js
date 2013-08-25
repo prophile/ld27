@@ -268,8 +268,8 @@ var Physics = function() {
             that.world.SetContactListener(myContactListener);
         }
 
-        this.newGoal = function(gameSize) {
-            Constants.get(["goal_width", "goal_height"], function(width, height) {
+        this.newGoal = function(gameSize, stage) {
+            Constants.get(["goal_width", "goal_height", "goal_image", "goal_scale"], function(width, height, image, scale) {
                 //floor
                 var floorDef                 = new b2FixtureDef;
                 floorDef.shape               = new b2PolygonShape();
@@ -286,6 +286,21 @@ var Physics = function() {
 
                 body.SetUserData({tag: "GOAL"});
                 body.CreateFixture(floorDef);
+
+                var e = new Entity();
+
+                var beeTexture = PIXI.Texture.fromImage(image, true);
+                var beeSprite = new PIXI.Sprite(beeTexture);
+
+                beeSprite.anchor.x = 0.5;
+                beeSprite.anchor.y = 0.5;
+                beeSprite.position.x = gameSize*0.5;
+                beeSprite.position.y = gameSize*0.5;
+
+                beeSprite.scale.x = scale;
+                beeSprite.scale.y = scale;
+                e.addComponent(SpriteComponent(stage, beeSprite));
+                World.add(e);
             });
         }
 

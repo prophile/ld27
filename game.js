@@ -148,6 +148,17 @@ var Game = function() {
             stage.position.x = gameWidth/2;
             stage.position.y = gameHeight/2;
             stage.addChild(container);
+            Constants.get("clock_face", function(value) {
+                var clock = new Entity();
+                console.log(value);
+                var beeTexture = PIXI.Texture.fromImage(value, true);
+                var beeSprite = new PIXI.Sprite(beeTexture);
+                beeSprite.width = gameWidth;
+                beeSprite.height = gameHeight;
+                clock.addComponent(SpriteComponent(container, beeSprite));
+                World.add(clock);
+                physics.newGoal(gameWidth, container);
+            });
             requestAnimFrame(that.step);
 
             titleStage = new PIXI.Stage(0xFFFF00);
@@ -155,7 +166,6 @@ var Game = function() {
             titleStage.addChild(text);
 
             physics.newBlock("player", container, true);
-            physics.newGoal(gameWidth);
         }
 
         function soundSetup() {
