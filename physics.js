@@ -170,12 +170,20 @@ var Physics = function() {
                     positionIterations = y;
                 });
 
-        this.update = function() {
+        var doneRotating = true
+        this.update = function(callback) {
             if (Math.abs(targetRotation - rotation) > turnRate) {
+                doneRotating = false;
                 function sign(x) { return x ? x < 0 ? -1 : 1 : 0; }
                 direction = sign(targetRotation - rotation);
                 rotation += direction * turnRate;
                 that.world.SetGravity(newGravity());
+            } else {
+                if (!doneRotating) {
+                    callback();
+                    console.log("done rotating");
+                    doneRotating = true;
+                }
             }
 
             that.toRemove = [];

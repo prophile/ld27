@@ -93,7 +93,11 @@ var Game = function() {
                 }
             });
             spinIfNecessary();
-            physics.update();
+            physics.update(function() {
+                lastSpin = unixTime();
+                spawnBlocks();
+
+            });
             $("#container").rotate(physics.getRotation());
         };
 
@@ -101,12 +105,6 @@ var Game = function() {
             Constants.get("spin_interval", function(value) {
                 if (unixTime() - lastSpin > value) {
                     spin();
-                }
-            });
-
-            Constants.get("spawn_interval", function(value) {
-                if (unixTime() - lastSpawn > value) {
-                    spawnBlocks();
                 }
             });
         }
@@ -143,6 +141,8 @@ var Game = function() {
         }
 
         function pixiSetup() {
+            lastSpin = unixTime();
+            lastSpawn = unixTime();
             stage = new PIXI.Stage(0x66FF99);
             container = new PIXI.DisplayObjectContainer();
             stage.position.x = gameWidth/2;
