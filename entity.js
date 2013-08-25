@@ -126,20 +126,28 @@ var MovableComponent = function() {
     return function(message) {
         if (message.id === "attach") {
             var left = false, right = false;
+            var that = this;
             var recompute = function() {
                 var x = 0;
                 if (left)
                     x -= 1;
                 if (right)
                     x += 1;
+                if (x < 0) {
+                    that({id: "face", direction: "left"});
+                } else if (x > 0) {
+                    that({id: "face", direction: "right"});
+                }
                 movement[0] = x * speed;
                 movement[1] = 0;
             };
-            var that = this;
             Input.press('move_up', function(x) {
                 that({id: "applyImpulse",
                       x: 0,
                       y: -verticalSpeed});
+            });
+            Input.press('gravityGun', function() {
+                that("grab");
             });
             Input.hold('move_left', function(x) { left = x; recompute(); });
             Input.hold('move_right', function(x) { right = x; recompute(); });
@@ -157,6 +165,14 @@ var MovableComponent = function() {
             message.body.ApplyForce(new b2Vec2(rotated[0], rotated[1]),
                                     message.body.GetWorldCenter());
             //message.body.SetLinearVelocity(new b2Vec2(movement[0], movement[1]))
+        }
+    };
+};
+
+var GrabberComponent = function() {
+    return function(message) {
+        if (message.id === "grab") {
+            console.log("Grabbing.");
         }
     };
 };

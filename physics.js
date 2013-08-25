@@ -114,6 +114,7 @@ var Physics = function() {
                     Constants.get("movement_vertical", function(x) {
                         e({id: "setVerticalSpeed", speed: x});
                     });
+                    e.addComponent(GrabberComponent());
                 }
                 World.add(e);
             });
