@@ -262,6 +262,29 @@ var GrabbableComponent = function() {
     };
 };
 
+var DebounceComponent = function(messageID, intervalConstant) {
+    var lastHeard = Number.NEGATIVE_INFINITY;
+    var spacing = 120;
+    Constants.get(intervalConstant, function(x) {
+        console.log("Cooldown on " + messageID + ": " + x);
+        spacing = x;
+    });
+    return function(message) {
+        if (message.id == messageID) {
+            var currentTime = unixTime();
+            var since = currentTime - lastHeard;
+            if (since >= spacing) {
+                lastHeard = currentTime;
+                console.log("permitted");
+                return message;
+            } else {
+                console.log("debounced");
+                return false;
+            }
+        }
+    };
+};
+
 var SpriteComponent = function(stage, sprite) {
     stage.addChild(sprite);
     return function(message) {
