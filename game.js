@@ -53,8 +53,22 @@ var Game = function() {
 
         function spinIfNecessary() {
             if (unixTime() - lastSpin > 10) {
+                spawnBlocks();
                 spin();
             }
+        }
+
+        function spawnBlocks() {
+            Constants.get(["blocks_to_spawn", "block_spawn_delay_ms"], function(blocksToSpawn, blockSpawnDelayMs) {
+                var block_count = 0;
+                var timer = setInterval(function() {
+                    physics.newBlock(stage);
+                    block_count++;
+                    if (block_count == blocksToSpawn) {
+                        clearInterval(timer);
+                    }
+                }, blockSpawnDelayMs);
+            });
         }
 
         function spin() {
@@ -80,10 +94,6 @@ var Game = function() {
             bee = Bee(stage);
             World.add(bee);
             physics.newBlock(stage);
-            Input.press("makeblock", function() {
-                console.log("hi");
-                physics.newBlock(stage);
-            });
         }
 
         function soundSetup() {

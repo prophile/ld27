@@ -99,7 +99,7 @@ var PhysicsComponent = function(body) {
                   x: position.x * PIXELS_PER_METER,
                   y: position.y * PIXELS_PER_METER});
             this({id:"absRotation",
-                  value: body.GetTransform().rotation * 180/PI});
+                  value: body.GetTransform().rotation * 180/Math.PI});
         }
     };
 };
@@ -146,9 +146,6 @@ var SpriteComponent = function(stage, sprite) {
         }
         if (message.id === "rotate") {
             sprite.rotation += message.amount;
-        }
-        if (message.id === "absRotation") {
-            sprite.rotation = message.value;
         }
         if (message.id === "delete") {
             stage.removeChild(sprite);
