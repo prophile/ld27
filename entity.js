@@ -108,7 +108,6 @@ var PhysicsComponent = function(body) {
             body.ApplyForce(new b2Vec2(rotated[0] * 60,
                                        rotated[1] * 60),
                             body.GetWorldCenter());
-            console.log(rotated);
         }
     };
 };
@@ -169,7 +168,6 @@ var SpriteComponent = function(stage, sprite) {
         }
 
         if (message.id === "absRotation") {
-            console.log(message.value);
             sprite.rotation = message.value * Math.PI/180;
         }
     };
