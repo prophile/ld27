@@ -227,8 +227,9 @@ var GrabberComponent = function() {
                     return Math.abs(lastPosition[0]-pos[0]) +
                            Math.abs(lastPosition[1]-pos[1]);
                 });
-                target({id: "grabbed",
-                        sender: this});
+                if (target)
+                    target({id: "grabbed",
+                            sender: this});
             }
         }
         if (message.id === "attachLift") {
