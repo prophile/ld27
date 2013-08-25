@@ -1,5 +1,8 @@
 Constants = (function() {
-    var CONSTANTS_URI = 'http://constantine.teaisaweso.me/json';
+    var CONSTANTS_URIS = [
+        'http://constantine.teaisaweso.me/json',
+        'local.json'
+    ];
 
     var gotConstants = new Bacon.Bus();
     var constants = gotConstants.toProperty().skipDuplicates(_.isEqual);
@@ -9,17 +12,33 @@ Constants = (function() {
     };
 
     var reload = function() {
-        var rawConstants = $.get(CONSTANTS_URI);
+        var rawConstantFiles = $.when.apply($, _.map(CONSTANTS_URIS,
+            function(uri) {
+                var df = new $.Deferred();
+                var raw = $.get(uri);
+                raw.done(function(x) {
+                    df.resolve(x);
+                });
+                raw.fail(function() {
+                    df.resolve('{"constants":[]}');
+                });
+                return df;
+        }));
         var typeDecoders = {'string': function(x) { return x; },
                             'float': parseFloat,
                             'integer': parseFloat,
                             'boolean': function(x) { return x; }};
-        rawConstants.done(function(value) {
-            var baseValues = JSON.parse(value);
+        rawConstantFiles.done(function() {
             var actualConstants = {};
-            _.each(baseValues['constants'], function(tuple) {
-                actualConstants[tuple.name] = typeDecoders[tuple.type](tuple.value);
-            });
+            for (var i = 0; i < arguments.length; ++i) {
+                var value = arguments[i];
+                if (typeof value === "string") {
+                    value = JSON.parse(value);
+                }
+                _.each(value['constants'], function(tuple) {
+                    actualConstants[tuple.name] = typeDecoders[tuple.type](tuple.value);
+                });
+            }
             gotConstants.push(actualConstants);
         });
     };
