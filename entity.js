@@ -129,6 +129,11 @@ var MovableComponent = function() {
                     x -= 1;
                 if (right)
                     x += 1;
+                if (x < 0) {
+                    this({id: "face", direction: "left"});
+                } else if (x > 0) {
+                    this({id: "face", direction: "right"});
+                }
                 movement[0] = x * speed;
                 movement[1] = 0;
             };
