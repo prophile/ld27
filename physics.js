@@ -104,10 +104,10 @@ var Physics = function() {
 
                 fd.shape.SetAsBox(1,1);
 
-                Constants.get([cls + "_image", cls + "_scale", cls + '_flags', "game_size"], function(value, scale, flags, size) {
+                Constants.get([cls + "_image", cls + "_scale", cls + '_flags', "game_size", "mousehole_spawn_distance"], function(value, scale, flags, size, dist) {
                     var bodyDef                  = new b2BodyDef();
                     bodyDef.type                 = b2Body.b2_dynamicBody;
-                    var radius = 40;
+                    var radius = dist;
                     var gravVec = newGravity()
                     gravVec.NegativeSelf();
                     gravVec.Normalize();
