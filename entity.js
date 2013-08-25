@@ -99,9 +99,7 @@ var PhysicsComponent = function(body) {
                   x: position.x * PIXELS_PER_METER,
                   y: position.y * PIXELS_PER_METER});
             this({id:"absRotation",
-                  value: body.GetTransform().rotation * 180/Math.PI});
-            var vel = body.GetLinearVelocity();
-            console.log(vel.x.toFixed(2), vel.y.toFixed(2));
+                  value: body.GetAngle() * 180/Math.PI});
         }
         if (message.id === "applyImpulse") {
             var phys = body.GetWorld().UserData;
@@ -111,14 +109,6 @@ var PhysicsComponent = function(body) {
                                        rotated[1] * 60),
                             body.GetWorldCenter());
             console.log(rotated);
-            //console.log(rotated);
-            //body.ApplyImpulse(new b2Vec2(rotated[0], rotated[1]),
-            //                        body.GetWorldCenter());
-            //var oldVelocity = body.GetLinearVelocity();
-            //oldVelocity.x += rotated[0];
-            //oldVelocity.y += rotated[1];
-            //oldVelocity.y += 10000000;
-            //body.SetLinearVelocity(oldVelocity);
         }
     };
 };
@@ -176,6 +166,11 @@ var SpriteComponent = function(stage, sprite) {
         }
         if (message.id === "delete") {
             stage.removeChild(sprite);
+        }
+
+        if (message.id === "absRotation") {
+            console.log(message.value);
+            sprite.rotation = message.value * Math.PI/180;
         }
     };
 };

@@ -68,6 +68,8 @@ var Physics = function() {
 
             var e = new Entity();
             Constants.get(["block_image", "block_scale"], function(value, scale) {
+                console.log("value");
+                console.log(value);
                 var beeTexture = PIXI.Texture.fromImage(value, true);
                 var beeSprite = new PIXI.Sprite(beeTexture);
 
@@ -127,13 +129,13 @@ var Physics = function() {
                     vec[0] * -sine + vec[1] * cosine];
         }
 
-        function addWall(x, y, width, height) {
+        function addWall(x, y, width, height, rotation, offset1, offset2) {
             //floor
             var floorDef                 = new b2FixtureDef;
             floorDef.shape               = new b2PolygonShape();
-            floorDef.shape.SetAsBox(width/2, height/2);
             floorDef.friction            = 0.2;
             floorDef.restitution         = 0.7;
+            floorDef.shape.SetAsOrientedBox(width/2, height/2, new b2Vec2(offset1, offset2), rotation * Math.PI/180);
 
             var floorBodyDef                  = new b2BodyDef();
             floorBodyDef.type                 = b2Body.b2_staticBody;
@@ -143,10 +145,15 @@ var Physics = function() {
         }
 
         function newWorld() {
-            addWall(gameWidth/2, 0, 10000, 3);
-            addWall(gameWidth/2, gameHeight, 10000, 3);
-            addWall(0, gameHeight/2, 3, 100000);
-            addWall(gameWidth, gameHeight/2, 3, 100000);
+            addWall(gameWidth/2, 0, 10000, 3, 0, 0, 0);
+            addWall(gameWidth/2, gameHeight, 10000, 3, 0, 0, 0);
+            addWall(0, gameHeight/2, 3, 100000, 0, 0, 0);
+            addWall(gameWidth, gameHeight/2, 3, 100000, 0, 0, 0);
+            //addWall(gameWidth, gameHeight/2, 100000, 3, 45, 3, 3);
+            addWall(gameWidth+100, gameHeight/2, 100000, 3, 45, 0, 0);
+            addWall(-100, gameHeight/2, 100000, 3, 45, 0, 0);
+            addWall(gameWidth/2, -100, 10000, 3, -45, 0, 0);
+            addWall(gameWidth/2, gameHeight+100, 10000, 3, -45, 0, 0);
         }
 
         this.rotate = rotate;
