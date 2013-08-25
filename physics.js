@@ -40,11 +40,20 @@ var Physics = function() {
         });
 
 
-        var debugDraw = newDebugDraw();
-
         this.world = new b2World(newGravity(), false);
         this.world.UserData = this;
-        this.world.SetDebugDraw(debugDraw);
+
+        var debugDraw = newDebugDraw();
+
+        Constants.get("debug_physics", function(value) {
+            if (value) {
+                that.world.SetDebugDraw(debugDraw);
+            } else {
+                that.world.SetDebugDraw(null);
+                debugDraw.m_sprite.graphics.clear();
+            }
+        });
+
         Constants.get("world_gravity", function(value) {
             gravity = value;
             that.world.SetGravity(newGravity());
