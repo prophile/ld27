@@ -96,6 +96,13 @@ var Physics = function() {
             fd.friction = 0.3;
             fd.restitution = 0.1;
 
+<<<<<<< HEAD
+=======
+            var killsYou = Math.random() < 0.25;
+            if (cls == "block" && killsYou) {
+                cls = "block_bad";
+            }
+>>>>>>> a7484c595a2615de13d26dfaaf35c477cf6bd900
 
             fd.shape.SetAsBox(1,1);
 
@@ -122,6 +129,7 @@ var Physics = function() {
 
                 e.addComponent(SpriteComponent(stage, beeSprite));
                 e.addComponent(PhysicsComponent(body));
+<<<<<<< HEAD
                 Constants.get("bad_block_prob"), function(value) {
                     var killsYou = Math.random() < value;
                     if (controllable) {
@@ -156,6 +164,24 @@ var Physics = function() {
                         World.add(e);
                     }
                 });
+=======
+                if (controllable) {
+                    body.SetUserData({tag: "PLAYER", entity:e});
+                    e.addComponent(MovableComponent());
+                    Constants.get("movement_speed", function(x) {
+                        e({id: "setMovementSpeed", speed: x});
+                    });
+                    Constants.get("movement_vertical", function(x) {
+                        e({id: "setVerticalSpeed", speed: x});
+                    });
+                    e.addComponent(GrabberComponent());
+                } else if (killsYou) {
+                    body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":true});
+                } else {
+                    e.addComponent(GrabbableComponent());
+                }
+                World.add(e);
+>>>>>>> a7484c595a2615de13d26dfaaf35c477cf6bd900
             });
         };
 
