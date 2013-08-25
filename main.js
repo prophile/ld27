@@ -4,6 +4,13 @@ jQuery.fn.rotate = function(degrees) {
     '-ms-transform' : 'rotate('+ degrees +'deg)',
     'transform' : 'rotate('+ degrees +'deg)'});
 };
+jQuery.fn.resetRotate = function(degrees) {
+    $(this).css({'-webkit-transform' : 'rotate(0deg)',
+        '-moz-transform' : 'rotate(0deg)',
+    '-ms-transform' : 'rotate(0deg)',
+    'transform' : 'rotate(0deg)'});
+};
+
 
 $(function() {
     Constants.get("game_size", function(value) {

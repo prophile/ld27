@@ -1,6 +1,6 @@
 var Physics = function() {
     PIXELS_PER_METER = 16;
-    return function(context, gameWidth, gameHeight) {
+    return function(context, gameWidth, gameHeight, endGameCallback) {
         var that = this;
         function newDebugDraw() {
             var debugDraw = new b2DebugDraw();
@@ -71,20 +71,20 @@ var Physics = function() {
                 massless = false;
             }
             Constants.get([cls + '_friction',
-                           cls + '_restitution'],
-                           function(fric, rest) {
-                fix.SetFriction(fric);
-                fix.SetRestitution(rest);
-            });
+                    cls + '_restitution'],
+                    function(fric, rest) {
+                        fix.SetFriction(fric);
+                        fix.SetRestitution(rest);
+                    });
             if (!massless) {
                 Constants.get(cls + '_density',
-                              function(density) {
-                    fix.SetDensity(density);
-                });
+                        function(density) {
+                            fix.SetDensity(density);
+                        });
             }
         };
 
-        newWorld();
+        newWorld(endGameCallback);
 
         this.newBlock = function(cls, stage, controllable) {
             if (controllable === undefined) {
@@ -95,6 +95,8 @@ var Physics = function() {
             fd.density = 1.0;
             fd.friction = 0.3;
             fd.restitution = 0.1;
+
+            var killsYou = Math.random() < 0.25;
 
             fd.shape.SetAsBox(1,1);
 
@@ -108,7 +110,7 @@ var Physics = function() {
             setPhysicalProperties(cls, fix);
 
             var e = new Entity();
-            body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime()});
+            body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":false});
             Constants.get([cls + "_image", cls + "_scale"], function(value, scale) {
                 var beeTexture = PIXI.Texture.fromImage(value, true);
                 var beeSprite = new PIXI.Sprite(beeTexture);
@@ -131,10 +133,27 @@ var Physics = function() {
                         e({id: "setVerticalSpeed", speed: x});
                     });
                     e.addComponent(GrabberComponent());
+                } else if(killsYou) {
+                    Constants.get(["block_bad_image", "block_bad_scale"], function(image, scale) {
+                        var beeTexture = PIXI.Texture.fromImage(image, true);
+                        var beeSprite = new PIXI.Sprite(beeTexture);
+                        var e = new Entity();
+
+                        beeSprite.anchor.x = 0.5;
+                        beeSprite.anchor.y = 0.5;
+
+                        beeSprite.scale.x = scale;
+                        beeSprite.scale.y = scale;
+
+                        e.addComponent(SpriteComponent(stage, beeSprite));
+                        e.addComponent(PhysicsComponent(body));
+                        body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":true});
+                        World.add(e);
+                    });
                 } else {
                     e.addComponent(GrabbableComponent());
+                    World.add(e);
                 }
-                World.add(e);
             });
         };
 
@@ -205,11 +224,11 @@ var Physics = function() {
             floorBodyDef.position.x           = x/PIXELS_PER_METER;
             floorBodyDef.position.y           = y/PIXELS_PER_METER;
             var body = that.world.CreateBody(floorBodyDef)
-            var fix = body.CreateFixture(floorDef);
+                var fix = body.CreateFixture(floorDef);
             setPhysicalProperties('wall', fix, true);
         }
 
-        function newWorld() {
+        function newWorld(endGameCallback) {
             addWall(gameWidth/2, 0, 10000, 3, 0, 0, 0);
             addWall(gameWidth/2, gameHeight, 10000, 3, 0, 0, 0);
             addWall(0, gameHeight/2, 3, 100000, 0, 0, 0);
@@ -221,20 +240,30 @@ var Physics = function() {
             addWall(gameWidth/2, gameHeight+gameHeight*0.25, 10000, 3, -45, 0, 0);
             var myContactListener = {
                 "BeginContact" : function(contact) {
-                    var data1 = contact.GetFixtureA().GetBody().GetUserData()
-                        var data2 = contact.GetFixtureB().GetBody().GetUserData()
-                        if (data1 && data2) {
-                            if (data1.tag == "GOAL" && data2.tag == "BLOCK") {
-                                if (unixTime() - data2.spawnTime > 5) {
-                                    that.toRemove.push(contact.GetFixtureB().GetBody());
-                                }
-                            }
-                            if (data2.tag == "GOAL" && data1.tag == "BLOCK") {
-                                if (unixTime() - data1.spawnTime > 5) {
-                                    that.toRemove.push(contact.GetFixtureA().GetBody());
-                                }
+                    var data1 = contact.GetFixtureA().GetBody().GetUserData();
+                    var data2 = contact.GetFixtureB().GetBody().GetUserData();
+                    if (data1 && data2) {
+                        if (data1.tag == "PLAYER" && data2.tag == "BLOCK") {
+                            if (data2.killsYou) {
+                                endGameCallback();
                             }
                         }
+                        if (data2.tag == "PLAYER" && data1.tag == "BLOCK") {
+                            if (data1.killsYou) {
+                                endGameCallback();
+                            }
+                        }
+                        if (data1.tag == "GOAL" && data2.tag == "BLOCK") {
+                            if (unixTime() - data2.spawnTime > 5) {
+                                that.toRemove.push(contact.GetFixtureB().GetBody());
+                            }
+                        }
+                        if (data2.tag == "GOAL" && data1.tag == "BLOCK") {
+                            if (unixTime() - data1.spawnTime > 5) {
+                                that.toRemove.push(contact.GetFixtureA().GetBody());
+                            }
+                        }
+                    }
                 },
                 "EndContact" : function() {
                 },
