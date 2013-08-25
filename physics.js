@@ -86,10 +86,7 @@ var Physics = function() {
 
         newWorld(endGameCallback);
 
-        this.newBlock = function(cls, stage, controllable) {
-            if (controllable === undefined) {
-                controllable = false;
-            }
+        this.newBlock = function(cls, stage) {
             var fd                 = new b2FixtureDef;
             fd.shape               = new b2PolygonShape();
             fd.density = 1.0;
@@ -107,21 +104,21 @@ var Physics = function() {
 
                 fd.shape.SetAsBox(1,1);
 
-                var bodyDef                  = new b2BodyDef();
-                bodyDef.type                 = b2Body.b2_dynamicBody;
-                bodyDef.position.x           = 300/PIXELS_PER_METER;
-                bodyDef.position.y           = 300/PIXELS_PER_METER;
-                bodyDef.allowSleep           = false;
-                if (controllable) {
-                    bodyDef.fixedRotation = true;
-                }
-                var body = that.world.CreateBody(bodyDef);
-                var fix = body.CreateFixture(fd);
-                setPhysicalProperties(cls, fix);
+                Constants.get([cls + "_image", cls + "_scale", cls + '_flags'], function(value, scale, flags) {
+                    var bodyDef                  = new b2BodyDef();
+                    bodyDef.type                 = b2Body.b2_dynamicBody;
+                    bodyDef.position.x           = 300/PIXELS_PER_METER;
+                    bodyDef.position.y           = 300/PIXELS_PER_METER;
+                    bodyDef.allowSleep           = false;
+                    if (/f/.exec(flags)) {
+                        bodyDef.fixedRotation = true;
+                    }
+                    var body = that.world.CreateBody(bodyDef);
+                    var fix = body.CreateFixture(fd);
+                    setPhysicalProperties(cls, fix);
 
-                var e = new Entity();
-                body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":false});
-                Constants.get([cls + "_image", cls + "_scale"], function(value, scale) {
+                    var e = new Entity();
+                    body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":false});
                     var beeTexture = PIXI.Texture.fromImage(value, true);
                     var beeSprite = new PIXI.Sprite(beeTexture);
 
@@ -133,7 +130,7 @@ var Physics = function() {
 
                     e.addComponent(SpriteComponent(stage, beeSprite));
                     e.addComponent(PhysicsComponent(body));
-                    if (controllable) {
+                    if (/c/.exec(flags)) {
                         body.SetUserData({tag: "PLAYER", entity:e});
                         e.addComponent(MovableComponent());
                         Constants.get("movement_speed", function(x) {
@@ -143,11 +140,15 @@ var Physics = function() {
                             e({id: "setVerticalSpeed", speed: x});
                         });
                         e.addComponent(GrabberComponent());
-                        e.addComponent(RotateWithWorldComponent());
                         e.addComponent(DebounceComponent('jump', 'jump_cooldown'));
-                    } else if (killsYou) {
+                    }
+                    if (/f/.exec(flags)) {
+                        e.addComponent(RotateWithWorldComponent());
+                    }
+                    if (/d/.exec(flags)) {
                         body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":true});
-                    } else {
+                    }
+                    if (/g/.exec(flags)) {
                         e.addComponent(GrabbableComponent());
                     }
                     World.add(e);
