@@ -36,6 +36,7 @@ var Physics = function() {
         var debugDraw = newDebugDraw();
 
         this.world = new b2World(newGravity(), false);
+        this.world.UserData = this;
         this.world.SetDebugDraw(debugDraw);
         Constants.get("world_gravity", function(value) {
             gravity = value;
