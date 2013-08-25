@@ -58,6 +58,7 @@ var Physics = function() {
             bodyDef.type                 = b2Body.b2_dynamicBody;
             bodyDef.position.x           = 300/PIXELS_PER_METER;
             bodyDef.position.y           = 300/PIXELS_PER_METER;
+            bodyDef.allowSleep           = false;
             var body = that.world.CreateBody(bodyDef);
             body.CreateFixture(fd);
 
