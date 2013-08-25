@@ -98,7 +98,7 @@ var Physics = function() {
                 that.world.SetGravity(newGravity());
             }
 
-            that.world.Step(3,3);
+            that.world.Step(10, 10);
             that.world.ClearForces();
         };
 
