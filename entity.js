@@ -123,6 +123,7 @@ var MovableComponent = function() {
     return function(message) {
         if (message.id === "attach") {
             var left = false, right = false;
+            var that = this;
             var recompute = function() {
                 var x = 0;
                 if (left)
@@ -130,14 +131,13 @@ var MovableComponent = function() {
                 if (right)
                     x += 1;
                 if (x < 0) {
-                    this({id: "face", direction: "left"});
+                    that({id: "face", direction: "left"});
                 } else if (x > 0) {
-                    this({id: "face", direction: "right"});
+                    that({id: "face", direction: "right"});
                 }
                 movement[0] = x * speed;
                 movement[1] = 0;
             };
-            var that = this;
             Input.press('move_up', function(x) {
                 that({id: "applyImpulse",
                       x: 0,
