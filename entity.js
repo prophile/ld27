@@ -116,6 +116,23 @@ var PhysicsComponent = function(body) {
                                        rotated[1] * 60),
                             body.GetWorldCenter());
         }
+        if (message.id == "addWeldJoint") {
+            var to = message.to;
+            var sourceBody = message.sourceBody;
+            if (sourceBody === undefined) {
+                to({id: "addWeldJoint",
+                    sourceBody: body});
+            } else {
+                var destBody = body;
+                var srcCentre = sourceBody.GetWorldCenter();
+                var destCentre = body.GetWorldCenter();
+                var b2Vec2 = Box2D.Common.Math.b2Vec2;
+                var anchor = new b2Vec2(0.5*(srcCentre.x + destCentre.x),
+                                        0.5*(srcCentre.y + destCentre.y));
+                var def = new Box2D.Dynamics.Joints.b2WeldJointDef;
+                def.Initialize(sourceBody, destBody, anchor);
+            }
+        }
     };
 };
 
@@ -170,9 +187,31 @@ var MovableComponent = function() {
 };
 
 var GrabberComponent = function() {
+    var attached = null;
     return function(message) {
         if (message.id === "grab") {
-            console.log("Grabbing.");
+            if (attached !== null) {
+                this({id: "removeWeldJoint",
+                      to: attached});
+                attached({id: "ungrabbed"});
+                attached = null;
+            } else {
+                World.all({id: "grabbed"});
+            }
+        }
+        if (message.id === "attachLift") {
+            attached = this.attached;
+            this({id: "addWeldJoint",
+                  to: attached});
+        }
+    };
+};
+
+var GrabbableComponent = function() {
+    return function(message) {
+        if (message.id === "grabbed") {
+            message.sender({id: "attachLift",
+                            attached: this});
         }
     };
 };
