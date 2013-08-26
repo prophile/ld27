@@ -267,12 +267,14 @@ var Physics = function() {
             addWall(-gameWidth*0.25, gameHeight/2, 100000, 3, 45, 0, 0);
             addWall(gameWidth/2, -gameHeight*0.25, 10000, 3, -45, 0, 0);
             addWall(gameWidth/2, gameHeight+gameHeight*0.25, 10000, 3, -45, 0, 0);
-            var platThickness = 0.7;
-            var platLength = 5;
-            newPlatform((1/2)*gameWidth, (2/7)*gameHeight, platLength, platThickness, 90);
-            newPlatform((1/2)*gameWidth, (5/7)*gameHeight, platLength, platThickness, 270);
-            newPlatform((2/7)*gameWidth, (1/2)*gameHeight, platThickness, platLength, 0);
-            newPlatform((5/7)*gameWidth, (1/2)*gameHeight, platThickness, platLength, 180);
+            var platThickness = Constants.k('platform_thickness');
+            var platLength = Constants.k('platform_length');
+            var platDepth = Constants.k('platform_depth');
+            var platInvDepth = 1 - platDepth;
+            newPlatform((1/2)*gameWidth, platDepth*gameHeight, platLength, platThickness, 90);
+            newPlatform((1/2)*gameWidth, platInvDepth*gameHeight, platLength, platThickness, 270);
+            newPlatform(platDepth*gameWidth, (1/2)*gameHeight, platThickness, platLength, 0);
+            newPlatform(platInvDepth*gameWidth, (1/2)*gameHeight, platThickness, platLength, 180);
             var myContactListener = {
                 "BeginContact" : function(contact) {
                     var data1 = contact.GetFixtureA().GetBody().GetUserData();
