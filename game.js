@@ -197,10 +197,22 @@ var Game = function() {
             var platLength = Constants.k('platform_length');
             var platDepth = Constants.k('platform_depth');
             var platInvDepth = 1 - platDepth;
-            physics.newPlatform((1/2)*gameWidth, platDepth*gameHeight, platLength, platThickness, 90, container);
-            physics.newPlatform((1/2)*gameWidth, platInvDepth*gameHeight, platLength, platThickness, 270, container);
-            physics.newPlatform(platDepth*gameWidth, (1/2)*gameHeight, platThickness, platLength, 0, container);
-            physics.newPlatform(platInvDepth*gameWidth, (1/2)*gameHeight, platThickness, platLength, 180, container);
+            physics.newPlatform(platDepth*gameWidth,
+                                platDepth*gameHeight,
+                                platLength, platThickness,
+                                (45 + 90)*0.5, container);
+            physics.newPlatform(platInvDepth*gameWidth,
+                                platInvDepth*gameHeight,
+                                platLength, platThickness,
+                                (45 + 90)*0.5, container);
+            physics.newPlatform(platDepth*gameWidth,
+                                platInvDepth*gameHeight,
+                                platLength, platThickness,
+                                (135 + 90)*0.5, container);
+            physics.newPlatform(platInvDepth*gameWidth,
+                                platDepth*gameHeight,
+                                platLength, platThickness,
+                                (135 + 90)*0.5, container);
         }
 
         function soundSetup() {
