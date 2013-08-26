@@ -220,7 +220,7 @@ class ScoreAdapter extends EntityAdapter
   doHitGoal: ->
     currentTime = unixTime()
     age = currentTime - @spawnTime
-    @callback(this) unless age < 5
+    @callback(this) unless age < 0.4
 
 class LimitedLifespanAdapter extends EntityAdapter
   constructor: (@lifespan, @callback, @next) ->
