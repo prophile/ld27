@@ -144,7 +144,7 @@ var Physics = function() {
                 e = new TagAdapter(['worthPoints', 'grabbable'], e);
                 e = new ScoreAdapter(function(x) {
                     x.seppuku();
-                    clock.add(Constants.k('clock_cheese_bonus'));
+                    worldClock.add(Constants.k('clock_cheese_bonus'));
                 }, e);
             }
             if (/t/.exec(flags)) {
