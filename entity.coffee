@@ -195,6 +195,10 @@ class GrabAdapter extends EntityAdapter
     return unless target?
     body = @getBody()
     targetBody = target.getBody()
+    lol = targetBody.GetUserData()
+    lol["grabbed"] = true;
+
+    targetBody.SetU
     headOffset = [0, -4.2]
     physics = body.GetWorld().UserData
     [headOffX, headOffY] = physics.rotate(headOffset)
@@ -230,7 +234,10 @@ class ScoreAdapter extends EntityAdapter
   doHitGoal: ->
     currentTime = unixTime()
     age = currentTime - @spawnTime
-    @callback(this) unless age < 0.4
+    body = @getBody()
+    if body.GetUserData()["grabbed"]?
+      @callback(this) unless age < 0.4
+
 
 class LimitedLifespanAdapter extends EntityAdapter
   constructor: (@lifespan, @callback, @next) ->
