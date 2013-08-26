@@ -48,3 +48,22 @@ platform_restitution  -- restitution coefficient of platforms
 platform_friction     -- friction coefficient of platforms
 spawn_randomness      -- randomness of location of spawn of boxes.
 minimum_rotation      -- the minimum rotation per spin
+debug_noSpawnBlocks   -- disable block spawning
+debug_noSpin          -- disable level rotation
+block_bad_friction    -- friction coefficient of the killer blocks
+block_bad_restitution -- restitution coefficient of the killer blocks
+movement_vertical_cargo -- jump impulse while carrying cargo; in newton-seconds
+platform_depth        -- distance of platforms from the edge of the level, in metres
+platform_length       -- length of a platform, in metres
+platform_thickness    -- thickness of a platform, in metres
+title_sprite          -- URI of the sprite to show as the title screen
+platform_sprite       -- URI of the sprite to show on the platforms
+game_length           -- length of the game countdown, in seconds
+clock_cheese_bonus    -- bonus time from collecting cheese, in seconds
+end_sprite            -- URI of the sprite to show as the game over screen
+spin_increase_period  -- time between spin speed increases, in milliseconds
+spin_increase         -- increment of spin speed, in a mysterious unknowable unit
+first_spin_delay      -- time before spinning begins, in seconds
+clock_hands           -- URI of the clock hands sprite
+grab_distance_limit   -- maximum distance where things can be grabbed, in metres
+movement_upforce      -- upforce when moving, in newtons
