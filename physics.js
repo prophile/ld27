@@ -151,7 +151,7 @@ var Physics = function() {
                 e = new ScoreAdapter(function(x) {
                     x.seppuku();
                     worldClock.add(Constants.k('clock_cheese_bonus'));
-                    Sound.playSound("http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/collect.wav");
+                    Sound.playCollect();
                 }, e);
             }
             if (/t/.exec(flags)) {

@@ -55,23 +55,21 @@ var Game = function() {
         this.setupGame = function() {
             physics = new Physics(context, gameWidth, gameHeight, function() {
                 stateBus.push(END_SCREEN);
-                Sound.playSound("http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/bell.mp3");
+                Sound.playBell();
                 var text = new PIXI.Text("Score: " + score, {font:"50px Arial", fill:"black"});
                 text.position.y = 250;
                 endContainer.addChild(text);
                 that.rotation = 0;
                 $("#container").resetRotate();
             }, function(timeRemaining) {
-                if (timeRemaining < 5) {
+                if (timeRemaining <= 5) {
+                    Sound.playWarning();
                     $("#time").css({"background-color":"#c00"});
                 } else {
+                    Sound.stopWarning();
                     $("#time").css({"background-color":"#0c0"});
                 }
-                if (timeRemaining == 5) {
-                    Sound.playSound("http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/clock_tick_002.mp3");
-                } else {
-                    Sound.stopSound("http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/clock_tick_002.mp3");
-                }
+
                 $("#time").css({"width":(timeRemaining/10.0*canvasSize()) + "px"});
             });
             currentState.changes()
@@ -302,7 +300,34 @@ var Game = function() {
         var preload = function() {
             // reload keys
             var KEYS = ['Mouse_Static',
-                        'Mouse_Static_Right'];
+                        'Mouse_Static_Right',
+                        'blocksfinal/Block_anger_blue',
+                        'blocksfinal/Block_anger',
+                        'blocksfinal/Block_Blue_Cool',
+                        'blocksfinal/Block_Cool',
+                        'blocksfinal/Block_Excited_blue',
+                        'blocksfinal/Block_Excited',
+                        'blocksfinal/Block_Glee_blue',
+                        'blocksfinal/Block_Glee',
+                        'blocksfinal/Block_Seething_blue',
+                        'blocksfinal/Block_Seething',
+                        'blocksfinal/Block_Shock_blue',
+                        'blocksfinal/Block_Shock',
+                        'blocksfinal/Block_Worried_blue',
+                        'blocksfinal/Block_Worried',
+                        'Mouse_Walkleft_a',
+                        'Mouse_Walkleft_b',
+                        'Mouse_Walkleft_c',
+                        'Mouse_Walkleft_d',
+                        'Mouse_Walkright_a',
+                        'Mouse_Walkright_b',
+                        'Mouse_Walkright_c',
+                        'Mouse_Walkright_d',
+                        'minutehand',
+                        'Minuteandhourhand',
+                        'Hourhand',
+                        'Exit',
+                        'Background_Clock'];
             _.each(KEYS, function(key) {
                 preload_asset(key);
             });
