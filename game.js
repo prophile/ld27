@@ -60,9 +60,7 @@ var Game = function() {
                 text.position.y = 250;
                 endContainer.addChild(text);
                 that.rotation = 0;
-                setTimeout(function() {
-                    $("#container").resetRotate();
-                }, 300);
+                $("#container").resetRotate();
             }, function(timeRemaining) {
                 if (timeRemaining == 5) {
                     Sound.playSound("http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/clock_tick_002.mp3");
