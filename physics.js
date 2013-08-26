@@ -143,7 +143,7 @@ var Physics = function() {
                 e = new PoisonAdapter(endGameCallback, 'player', e);
             }
             if (/g/.exec(flags)) {
-                e = new TagAdapter(['grabbable'], e);
+                e = new TagAdapter(['worthPoints', 'grabbable'], e);
                 e = new ScoreAdapter(e);
             }
             if (/t/.exec(flags)) {
@@ -291,18 +291,6 @@ var Physics = function() {
                             data1.entity.collideInto(data2.entity);
                             data2.entity.collideInto(data1.entity);
                         }
-                        if (data1.tag == "GOAL" && data2.entity != null) {
-                            data2.entity.doHitGoal()
-                            if (unixTime() - data2.spawnTime > 5) {
-                                that.toRemove.push(contact.GetFixtureB().GetBody());
-                            }
-                        }
-                        if (data2.tag == "GOAL" && data1.entity != null) {
-                            data1.entity.doHitGoal()
-                            if (unixTime() - data1.spawnTime > 5) {
-                                that.toRemove.push(contact.GetFixtureA().GetBody());
-                            }
-                        }
                         if (data1.tag == "WALL" && data2.entity != null) {
                             data2.entity.doHitWall();
                         }
@@ -353,10 +341,11 @@ var Physics = function() {
 
             beeSprite.scale.x = scale;
             beeSprite.scale.y = scale;
-            e = new FixedLocationAdapter(gameSize*0.5 / PIXELS_PER_METER,
-                                         gameSize*0.5 / PIXELS_PER_METER,
-                                         0, e)
+            e = new PhysicsEntityAdapter(body, e);
             e = new SpriteAdapter(stage, beeSprite, e);
+            e = new PoisonAdapter(function(x) {
+                x.doHitGoal();
+            }, 'worthPoints', e);
             World.add(e);
         }
 
