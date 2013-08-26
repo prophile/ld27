@@ -32,6 +32,13 @@ var Sound = (function() {
         console.log("Stopping music.");
     });
 
+    var playSound = function(url) {
+        console.log("palying");
+        var sound = new Howl({
+            urls: [url]
+        }).play();
+    }
+
     var playMusic = function() {
         musicRequested.push(true);
     };
@@ -41,6 +48,7 @@ var Sound = (function() {
     };
 
     return {'playMusic': playMusic,
-            'stopMusic': stopMusic};
+            'stopMusic': stopMusic,
+            'playSound': playSound};
 }());
 
