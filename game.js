@@ -201,7 +201,17 @@ var Game = function() {
             clock = new FixedLocationAdapter(0, 0, 0, clock)
             clock = new SpriteAdapter(container, beeSprite, clock);
             World.add(clock);
+
             physics.newGoal(gameWidth, container);
+            var value = Constants.k('clock_hands');
+            var clock = new BaseEntity();
+            var beeTexture = PIXI.Texture.fromImage(value, true);
+            var beeSprite = new PIXI.Sprite(beeTexture);
+            beeSprite.width = gameWidth;
+            beeSprite.height = gameHeight;
+            clock = new FixedLocationAdapter(0, 0, 0, clock)
+            clock = new SpriteAdapter(container, beeSprite, clock);
+            World.add(clock);
             requestAnimFrame(that.step);
 
             titleStage = new PIXI.Stage(0xFFFF00);
