@@ -35,7 +35,6 @@ var Sound = (function() {
         console.log("Stopping music.");
     });
 
-<<<<<<< HEAD
     var warningPlaying = warningRequested.toProperty(false)
                                          .and(warningLoaded.toProperty(false));
     var warningStartStop = warningPlaying.changes().skip(1).skipDuplicates();
@@ -60,9 +59,6 @@ var Sound = (function() {
     var collect = new Howl({urls: ['http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/collect.wav']});
     var bell = new Howl({urls: ['http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/bell.mp3']});
     var jump = new Howl({urls: ['http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/jump.wav']});
-=======
-    sounds = {}
->>>>>>> origin/master
 
     var playSound = function(url) {
         console.log("palying");
