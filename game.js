@@ -144,6 +144,7 @@ var Game = function() {
         }
 
         function pixiSetup() {
+            preload();
             lastSpin = unixTime();
             lastSpawn = unixTime();
             stage = new PIXI.Stage(0x66FF99);
@@ -173,5 +174,19 @@ var Game = function() {
         function soundSetup() {
             Sound.playMusic();
         }
+
+        var preload_image = function(uri) {
+            PIXI.Texture.fromImage(uri, true);
+        };
+
+        var preload = function() {
+            // reload keys
+            var KEYS = ['block_image',
+                        'player_image',
+                        'block_bad_image'];
+            _.each(KEYS, function(key) {
+                _.each(Constants.k(key).split(' '), preload_image);
+            });
+        };
     };
 }();
