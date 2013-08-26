@@ -64,8 +64,10 @@ var Game = function() {
             }, function(timeRemaining) {
                 if (timeRemaining <= 5) {
                     Sound.playWarning();
+                    $("#time").css({"background-color":"#c00"});
                 } else {
                     Sound.stopWarning();
+                    $("#time").css({"background-color":"#0c0"});
                 }
 
                 $("#time").css({"width":(timeRemaining/10.0*canvasSize()) + "px"});
