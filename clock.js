@@ -24,10 +24,12 @@ Clock = (function() {
 
         var reset = function() {
             level = max;
+            pulse.push(level);
         };
 
         var add = function(n) {
             level = Math.min(level + n, max);
+            pulse.push(level);
         };
 
         var onPulse = function(callback) {
