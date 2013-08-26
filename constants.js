@@ -3,7 +3,7 @@ function unixTime() {
 }
 Constants = (function() {
     var CONSTANTS_URIS = [
-        'http://constantine.teaisaweso.me/json',
+        'final.json',
         'local.json'
     ];
 
