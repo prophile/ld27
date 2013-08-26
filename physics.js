@@ -227,7 +227,7 @@ var Physics = function() {
                    vec[0] * -sine + vec[1] * cosine];
         }
 
-        this.newPlatform = function(x, y, width, height, orientation, stage) {
+        this.newPlatform = function(x, y, width, height, orientation, stage, phantom) {
             var orientationRadians  = orientation * (Math.PI/180);
             var platformDef         = new b2FixtureDef;
             platformDef.shape       = new b2PolygonShape();
@@ -249,17 +249,21 @@ var Physics = function() {
             var sprite = Constants.k("platform_sprite");
             var e = new BaseEntity();
 
-            var beeTexture = PIXI.Texture.fromImage(sprite, true);
-            var beeSprite = new PIXI.Sprite(beeTexture);
-
-            beeSprite.anchor.x = 0.5;
-            beeSprite.anchor.y = 0.5;
-
-            beeSprite.width    = width*PIXELS_PER_METER;
-            beeSprite.height   = height*PIXELS_PER_METER;
-
             e = new PhysicsEntityAdapter(body, e);
-            e = new SpriteAdapter(stage, beeSprite, e);
+
+            if (!phantom) {
+                var beeTexture = PIXI.Texture.fromImage(sprite, true);
+                var beeSprite = new PIXI.Sprite(beeTexture);
+
+                beeSprite.anchor.x = 0.5;
+                beeSprite.anchor.y = 0.5;
+
+                beeSprite.width    = width*PIXELS_PER_METER;
+                beeSprite.height   = height*PIXELS_PER_METER;
+
+                e = new SpriteAdapter(stage, beeSprite, e);
+            }
+
             World.add(e);
         }
 
