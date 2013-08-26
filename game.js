@@ -62,6 +62,11 @@ var Game = function() {
                 that.rotation = 0;
                 $("#container").resetRotate();
             }, function(timeRemaining) {
+                if (timeRemaining < 5) {
+                    $("#time").css({"background-color":"#c00"});
+                } else {
+                    $("#time").css({"background-color":"#0c0"});
+                }
                 if (timeRemaining == 5) {
                     Sound.playSound("http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/clock_tick_002.mp3");
                 } else {
