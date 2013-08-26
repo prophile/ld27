@@ -213,6 +213,26 @@ var Game = function() {
                                 platDepth*gameHeight,
                                 platLength, platThickness,
                                 (135 + 90)*0.5, container);
+            physics.newPlatform(0.5*gameWidth,
+                                0.13*gameHeight,
+                                3, 9,
+                                0, container,
+                                true);
+            physics.newPlatform(0.5*gameWidth,
+                                0.87*gameHeight,
+                                3, 9,
+                                0, container,
+                                true);
+            physics.newPlatform(0.87*gameWidth,
+                                0.5*gameHeight,
+                                9, 3,
+                                0, container,
+                                true);
+            physics.newPlatform(0.13*gameWidth,
+                                0.5*gameHeight,
+                                9, 3,
+                                0, container,
+                                true);
         }
 
         function soundSetup() {
