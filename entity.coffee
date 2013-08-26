@@ -5,8 +5,9 @@ World = do ->
     object.doAttach()
     objects.push object
   del: (object) ->
+    target = object.getBase()
     object.doDetach()
-    objects = (obj for obj in objects when obj isnt object)
+    objects = (obj for obj in objects when obj.getBase() isnt object)
   all: (callback) ->
     callback(obj) for obj in objects
   select: (callback) ->
@@ -53,12 +54,13 @@ class EntityAdapter
   doAttach: -> @next.doAttach()
   doDetach: -> @next.doDetach()
   canGrab: -> @next.canGrab()
-  collideInto: (other, clear) -> @next.collideInto(other, clear)
+  collideInto: (other) -> @next.collideInto(other)
   doHitGoal: -> @next.doHitGoal()
   getBase: -> @next.getBase()
   hasCargo: -> @next.hasCargo()
   isPlayer: -> @next.isPlayer()
   getFacing: -> @next.getFacing()
+  seppuku: -> World.del(this)
 
 class FixedLocationAdapter extends EntityAdapter
   constructor: (@x, @y, @rotation, @next) ->
@@ -82,6 +84,8 @@ class ControlAdapter extends EntityAdapter
     Input.press('move_up', => @doJump())
     Input.press('gravityGun', => @doGrab())
     @next.doAttach()
+
+  isPlayer: -> true
 
 class LateralMovementAdapter extends EntityAdapter
   constructor: (@next) ->
@@ -179,15 +183,21 @@ class GrabbableAdapter extends EntityAdapter
   canGrab: -> true
 
 class PoisonAdapter extends EntityAdapter
-  collideInto: (entity) ->
-    @_endGame() if entity.isPlayer()
+  constructor: (@callback, @next) ->
 
-  _endGame: ->
-    throw "Not yet implemented."
+  collideInto: (entity) ->
+    @callback() if entity.isPlayer()
+    @next.collideInto(entity)
 
 class ScoreAdapter extends EntityAdapter
+  doAttach: ->
+    @spawnTime = unixTime()
+    @next.doAttach()
+
   doHitGoal: ->
-    throw "Not yet implemented."
+    currentTime = unixTime()
+    age = currentTime - @spawnTime
+    @seppuku() unless age < 5
 
 class RotateWithWorldAdapter extends EntityAdapter
   doTick: ->

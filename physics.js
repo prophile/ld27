@@ -120,7 +120,6 @@ var Physics = function() {
             setPhysicalProperties(cls, fix);
 
             var e = new BaseEntity();
-            body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":false});
             var beeTexture = PIXI.Texture.fromImage(value, true);
             var beeSprite = new PIXI.Sprite(beeTexture);
 
@@ -136,25 +135,26 @@ var Physics = function() {
 
             e = new PhysicsEntityAdapter(body, e)
             e = new SpriteAdapter(stage, beeSprite, e);
+            if (/f/.exec(flags)) {
+                e = new RotateWithWorldAdapter(e);
+            }
+            if (/d/.exec(flags)) {
+                e = new PoisonAdapter(endGameCallback, e);
+            }
+            if (/g/.exec(flags)) {
+                e = new GrabbableAdapter(e);
+                e = new ScoreAdapter(e);
+            }
             if (/c/.exec(flags)) {
-                body.SetUserData({tag: "PLAYER", entity:e});
                 e = new LateralMovementAdapter(e);
                 e = new GrabAdapter(e);
                 e = new JumpAdapter(e);
                 e = new DebugLateralMovementAdapter(e);
                 e = new JumpSpacingAdapter(e);
                 e = new ControlAdapter(e);
-            }
-            if (/f/.exec(flags)) {
-                e = new RotateWithWorldAdapter(e);
-            }
-            if (/d/.exec(flags)) {
-                e = new PoisonAdapter(e);
-                body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime(), "killsYou":true});
-            }
-            if (/g/.exec(flags)) {
-                e = new GrabbableAdapter(e);
-                e = new ScoreAdapter(e);
+                body.SetUserData({tag: "PLAYER", entity:e});
+            } else {
+                body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime()});
             }
             World.add(e);
         };
@@ -275,42 +275,22 @@ var Physics = function() {
                     var data1 = contact.GetFixtureA().GetBody().GetUserData();
                     var data2 = contact.GetFixtureB().GetBody().GetUserData();
                     if (data1 && data2) {
-                        if (data1.tag == "PLAYER" && data2.tag == "BLOCK") {
-                            if (data2.killsYou) {
-                                endGameCallback();
-                            }
+                        if (data1.entity !== undefined && data2.entity !== undefined) {
+                            console.log("ENTITY HIT");
+                            data1.entity.collideInto(data2.entity);
+                            data2.entity.collideInto(data1.entity);
                         }
-                        if (data2.tag == "PLAYER" && data1.tag == "BLOCK") {
-                            if (data1.killsYou) {
-                                endGameCallback();
-                            }
-                        }
-                        if (data1.tag == "GOAL" && data2.tag == "BLOCK") {
+                        if (data1.tag == "GOAL" && data2.entity != null) {
+                            data2.entity.doHitGoal()
                             if (unixTime() - data2.spawnTime > 5) {
                                 that.toRemove.push(contact.GetFixtureB().GetBody());
                             }
                         }
-                        if (data2.tag == "GOAL" && data1.tag == "BLOCK") {
+                        if (data2.tag == "GOAL" && data1.entity != null) {
+                            data1.entity.doHitGoal()
                             if (unixTime() - data1.spawnTime > 5) {
                                 that.toRemove.push(contact.GetFixtureA().GetBody());
                             }
-                        }
-                        var platformCollision = function(platformFixture, entityFixture) {
-                            var platformBody = platformFixture.GetBody();
-                            var platformAngle = platformBody.GetAngle();
-                            var body = entityFixture.GetBody();
-                            var angle = body.GetAngle();
-                            var relativeCos = Math.cos(angle - platformAngle);
-                            if (relativeCos < 0) {
-                                console.log("platform pass through");
-                                contact.SetEnabled(false);
-                            }
-                        };
-                        if (data1.tag == "PLATFORM") {
-                            platformCollision(contact.GetFixtureA(), contact.GetFixtureB());
-                        }
-                        if (data2.tag == "PLATFORM") {
-                            platformCollision(contact.GetFixtureB(), contact.GetFixtureA());
                         }
                     }
                 },
