@@ -56,6 +56,9 @@ var Game = function() {
             physics = new Physics(context, gameWidth, gameHeight, function() {
                 stateBus.push(END_SCREEN);
                 Sound.playSound("http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/bell.mp3");
+                var text = new PIXI.Text("Score: " + score, {font:"50px Arial", fill:"black"});
+                text.position.y = 250;
+                endContainer.addChild(text);
                 that.rotation = 0;
                 setTimeout(function() {
                     $("#container").resetRotate();
