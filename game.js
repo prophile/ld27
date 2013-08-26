@@ -19,6 +19,11 @@ var Game = function() {
         var stage    = null;
         var container = null;
         var titleStage = null;
+        var titleContainer = null;
+
+        var endStage = null;
+        var endContainer = null;
+        var score = 0;
 
         function canvasSize() {
             var $window = $(window);
@@ -48,6 +53,8 @@ var Game = function() {
                 setTimeout(function() {
                     $("#container").resetRotate();
                 }, 300);
+            }, function(timeRemaining) {
+                $("#time").css({"width":(timeRemaining*10) + "px"});
             });
             currentState.changes()
                         .filter(function(x) { return x == GAME; })
@@ -91,21 +98,27 @@ var Game = function() {
         });
 
         this.step = function() {
+            score += 7;
             requestAnimFrame(that.step);
             stepBus.push();
         };
 
         this.draw_title_screen = function() {
+            titleContainer.scale.x = canvasSize()/gameWidth;
+            titleContainer.scale.y = canvasSize()/gameWidth;
             renderer.render(titleStage);
         };
 
         this.draw_end_screen = function() {
-            renderer.render(titleStage);
+            endContainer.scale.x = canvasSize()/gameWidth;
+            endContainer.scale.y = canvasSize()/gameWidth;
+            renderer.render(endStage);
+            $("#sup").hide();
         };
 
         this.update = function() {
             value = Constants.k('target_cheeses');
-            $("#removed").text("Boxes removed: " + physics.boxesRemoved + "/" + value);
+            $("#removed").text("Score: " + score);
             if (physics.boxesRemoved >= value) {
                 stateBus.push(END_SCREEN);
             }
@@ -175,7 +188,8 @@ var Game = function() {
             stage.position.x = gameWidth/2;
             stage.position.y = gameHeight/2;
             stage.addChild(container);
-            value = Constants.k('clock_face');
+
+            var value = Constants.k('clock_face');
             var clock = new BaseEntity();
             var beeTexture = PIXI.Texture.fromImage(value, true);
             var beeSprite = new PIXI.Sprite(beeTexture);
@@ -188,8 +202,29 @@ var Game = function() {
             requestAnimFrame(that.step);
 
             titleStage = new PIXI.Stage(0xFFFF00);
-            var text = new PIXI.Text("lol title screen", {font:"50px Arial", fill:"red"});
-            titleStage.addChild(text);
+            titleStage.position.x = gameWidth/2;
+            titleStage.position.x = gameHeight/2;
+            titleContainer = new PIXI.DisplayObjectContainer();
+            var titleSpriteName = Constants.k("title_sprite");
+            console.log(titleSpriteName);
+            var spriteTexture  = PIXI.Texture.fromImage(titleSpriteName, true);
+            var titleSprite    = new PIXI.Sprite(spriteTexture);
+            titleSprite.width = gameWidth;
+            titleSprite.height = gameHeight;
+            titleContainer.addChild(titleSprite);
+            titleStage.addChild(titleContainer);
+
+            endStage = new PIXI.Stage(0xFFFF00);
+            endStage.position.x = gameWidth/2;
+            endStage.position.x = gameHeight/2;
+            endContainer = new PIXI.DisplayObjectContainer();
+            var endSpriteName = Constants.k("end_sprite");
+            var spriteTexture  = PIXI.Texture.fromImage(endSpriteName, true);
+            var endSprite    = new PIXI.Sprite(spriteTexture);
+            endSprite.width = gameWidth;
+            endSprite.height = gameHeight;
+            endContainer.addChild(endSprite);
+            endStage.addChild(endContainer);
 
             physics.newBlock("player", container);
 

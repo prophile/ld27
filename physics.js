@@ -1,6 +1,6 @@
 var Physics = function() {
     PIXELS_PER_METER = 16;
-    return function(context, gameWidth, gameHeight, endGameCallback) {
+    return function(context, gameWidth, gameHeight, endGameCallback, pulseCallback) {
         var that = this;
         function newDebugDraw() {
             var debugDraw = new b2DebugDraw();
@@ -14,6 +14,8 @@ var Physics = function() {
 
         var worldClock = new Clock(Constants.k('game_length'));
         worldClock.onOver(endGameCallback);
+        worldClock.onPulse(pulseCallback);
+
 
         this.startClock = worldClock.start;
 
