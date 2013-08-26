@@ -295,7 +295,34 @@ var Game = function() {
         var preload = function() {
             // reload keys
             var KEYS = ['Mouse_Static',
-                        'Mouse_Static_Right'];
+                        'Mouse_Static_Right',
+                        'blocksfinal/Block_anger_blue',
+                        'blocksfinal/Block_anger',
+                        'blocksfinal/Block_Blue_Cool',
+                        'blocksfinal/Block_Cool',
+                        'blocksfinal/Block_Excited_blue',
+                        'blocksfinal/Block_Excited',
+                        'blocksfinal/Block_Glee_blue',
+                        'blocksfinal/Block_Glee',
+                        'blocksfinal/Block_Seething_blue',
+                        'blocksfinal/Block_Seething',
+                        'blocksfinal/Block_Shock_blue',
+                        'blocksfinal/Block_Shock',
+                        'blocksfinal/Block_Worried_blue',
+                        'blocksfinal/Block_Worried',
+                        'Mouse_Walkleft_a',
+                        'Mouse_Walkleft_b',
+                        'Mouse_Walkleft_c',
+                        'Mouse_Walkleft_d',
+                        'Mouse_Walkright_a',
+                        'Mouse_Walkright_b',
+                        'Mouse_Walkright_c',
+                        'Mouse_Walkright_d',
+                        'minutehand',
+                        'Minuteandhourhand',
+                        'Hourhand',
+                        'Exit',
+                        'Background_Clock'];
             _.each(KEYS, function(key) {
                 preload_asset(key);
             });
