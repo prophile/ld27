@@ -217,26 +217,40 @@ var Physics = function() {
                    vec[0] * -sine + vec[1] * cosine];
         }
 
-        function newPlatform(x, y, width, height, orientation) {
+        this.newPlatform = function(x, y, width, height, orientation, stage) {
             var orientationRadians  = orientation * (Math.PI/180);
             var platformDef         = new b2FixtureDef;
             platformDef.shape       = new b2PolygonShape();
             platformDef.friction    = 0.2;
             platformDef.restitution = 0.7;
-            platformDef.shape.SetAsOrientedBox(width/2, height/2, new b2Vec2(0, 0), orientationRadians);
+            platformDef.shape.SetAsBox(width/2, height/2);
 
             var platformBodyDef    = new b2BodyDef();
             platformBodyDef.type   = b2Body.b2_staticBody;
             platformBodyDef.position.x = x/PIXELS_PER_METER;
             platformBodyDef.position.y = y/PIXELS_PER_METER;
             var body = that.world.CreateBody(platformBodyDef);
-            body.SetAngle(orientationRadians);
+            body.SetAngle(orientationRadians*2);
 
             body.SetUserData({'tag': 'WALL'});
 
             var fix = body.CreateFixture(platformDef);
             setPhysicalProperties('platform', fix, true);
+            var sprite = Constants.k("platform_sprite");
+            var e = new BaseEntity();
 
+            var beeTexture = PIXI.Texture.fromImage(sprite, true);
+            var beeSprite = new PIXI.Sprite(beeTexture);
+
+            beeSprite.anchor.x = 0.5;
+            beeSprite.anchor.y = 0.5;
+
+            beeSprite.width    = width*PIXELS_PER_METER;
+            beeSprite.height   = height*PIXELS_PER_METER;
+
+            e = new PhysicsEntityAdapter(body, e);
+            e = new SpriteAdapter(stage, beeSprite, e);
+            World.add(e);
         }
 
         function addWall(x, y, width, height, rotation, offset1, offset2) {
@@ -267,12 +281,6 @@ var Physics = function() {
             addWall(-gameWidth*0.25, gameHeight/2, 100000, 3, 45, 0, 0);
             addWall(gameWidth/2, -gameHeight*0.25, 10000, 3, -45, 0, 0);
             addWall(gameWidth/2, gameHeight+gameHeight*0.25, 10000, 3, -45, 0, 0);
-            var platThickness = 0.7;
-            var platLength = 5;
-            newPlatform((1/2)*gameWidth, (2/7)*gameHeight, platLength, platThickness, 90);
-            newPlatform((1/2)*gameWidth, (5/7)*gameHeight, platLength, platThickness, 270);
-            newPlatform((2/7)*gameWidth, (1/2)*gameHeight, platThickness, platLength, 0);
-            newPlatform((5/7)*gameWidth, (1/2)*gameHeight, platThickness, platLength, 180);
             var myContactListener = {
                 "BeginContact" : function(contact) {
                     var data1 = contact.GetFixtureA().GetBody().GetUserData();
