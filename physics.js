@@ -349,8 +349,8 @@ var Physics = function() {
             beeSprite.anchor.x = 0.5;
             beeSprite.anchor.y = 0.5;
 
-            beeSprite.scale.x = scale;
-            beeSprite.scale.y = scale;
+            beeSprite.width = width*PIXELS_PER_METER;
+            beeSprite.height = height*PIXELS_PER_METER;
             e = new PhysicsEntityAdapter(body, e);
             e = new SpriteAdapter(stage, beeSprite, e);
             e = new PoisonAdapter(function(x) {
