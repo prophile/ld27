@@ -15,6 +15,8 @@ var Physics = function() {
         var worldClock = new Clock(Constants.k('game_length'));
         worldClock.onOver(endGameCallback);
 
+        this.startClock = worldClock.start;
+
         var b2Vec2 = Box2D.Common.Math.b2Vec2;
         var b2BodyDef = Box2D.Dynamics.b2BodyDef;
         var b2Body = Box2D.Dynamics.b2Body;

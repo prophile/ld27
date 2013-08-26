@@ -58,7 +58,11 @@ var Input = (function() {
         barrier = barrier.skipDuplicates();
         barrier.onValue(callback);
     };
+    var key = function(command) {
+        return presses.filter(function(x) { return x === command; });
+    };
     return {'press': bindPress,
-            'hold': bindHold};
+            'hold': bindHold,
+            'key': key};
 })();
 

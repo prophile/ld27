@@ -7,7 +7,8 @@ var Game = function() {
         var TITLE_SCREEN = 0;
         var GAME = 1;
         var END_SCREEN = 2;
-        var state     = TITLE_SCREEN;
+        var stateBus     = new Bacon.Bus;
+        var currentState = stateBus.toProperty(TITLE_SCREEN);
 
         var renderer = null;
         var physics  = null;
@@ -42,34 +43,56 @@ var Game = function() {
 
         this.setupGame = function() {
             physics = new Physics(context, gameWidth, gameHeight, function() {
-                state = END_SCREEN;
+                stateBus.push(END_SCREEN);
                 that.rotation = 0;
                 setTimeout(function() {
                     $("#container").resetRotate();
                 }, 300);
             });
+            currentState.changes()
+                        .filter(function(x) { return x == GAME; })
+                        .onValue(function() {
+                physics.startClock();
+            });
             pixiSetup();
             soundSetup();
-            Input.press("title_to_game", function() {
-                if (state === TITLE_SCREEN) {
-                    state = GAME;
-                } else if (state === END_SCREEN) {
-                    location.reload();
-                }
-            });
+            var inputs = Input.key('title_to_game');
+            inputs.filter(currentState.map(function(x) { return x === TITLE_SCREEN; }))
+                  .onValue(function() { stateBus.push(GAME); });
+            inputs.filter(currentState.map(function(x) { return x === END_SCREEN; }))
+                  .onValue(function() { location.reload(); });
         };
 
+        var stepTitle = function() {
+            that.draw_title_screen();
+        };
+
+        var stepGame = function() {
+            that.update();
+            that.render();
+        };
+
+        var stepEnd = function() {
+            that.draw_end_screen();
+        };
+
+        var stepFunction = currentState.map(function(s) {
+            switch (s) {
+                case TITLE_SCREEN: return stepTitle;
+                case GAME: return stepGame;
+                case END_SCREEN: return stepEnd;
+            }
+        });
+
+        var stepBus = new Bacon.Bus();
+
+        stepFunction.sampledBy(stepBus).onValue(function (callback) {
+            callback();
+        });
 
         this.step = function() {
             requestAnimFrame(that.step);
-            if (state == TITLE_SCREEN) {
-                that.draw_title_screen();
-            } else if (state == GAME) {
-                that.update();
-                that.render();
-            } else {
-                that.draw_end_screen();
-            }
+            stepBus.push();
         };
 
         this.draw_title_screen = function() {
@@ -84,7 +107,7 @@ var Game = function() {
             value = Constants.k('target_cheeses');
             $("#removed").text("Boxes removed: " + physics.boxesRemoved + "/" + value);
             if (physics.boxesRemoved >= value) {
-                state = END_SCREEN;
+                stateBus.push(END_SCREEN);
             }
             spinIfNecessary();
             physics.update(function() {
