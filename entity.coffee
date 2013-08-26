@@ -38,14 +38,13 @@ class BaseEntity
   doGrab: ->
   doAttach: ->
   doDetach: ->
-  canGrab: -> false
   hasCargo: -> false
   collideInto: ->
   doHitGoal: ->
   getBase: -> this
-  isPlayer: -> false
   getFacing: -> "right"
   doHitWall: ->
+  hasTag: (tag) -> false
 
 class EntityAdapter
   constructor: (@next) ->
@@ -60,15 +59,16 @@ class EntityAdapter
   getRotation: -> @next.getRotation()
   doAttach: -> @next.doAttach()
   doDetach: -> @next.doDetach()
-  canGrab: -> @next.canGrab()
   collideInto: (other) -> @next.collideInto(other)
   doHitGoal: -> @next.doHitGoal()
   getBase: -> @next.getBase()
   hasCargo: -> @next.hasCargo()
-  isPlayer: -> @next.isPlayer()
   getFacing: -> @next.getFacing()
   doHitWall: -> @next.doHitWall()
+
   seppuku: -> World.del(this)
+
+  hasTag: (tag) -> @next.hasTag(tag)
 
 class FixedLocationAdapter extends EntityAdapter
   constructor: (@x, @y, @rotation, @next) ->
@@ -97,7 +97,12 @@ class ControlAdapter extends EntityAdapter
     Input.press('gravityGun', => @doGrab())
     @next.doAttach()
 
-  isPlayer: -> true
+class TagAdapter extends EntityAdapter
+  constructor: (@tags, @next) ->
+
+  hasTag: (tag) ->
+    return true if tag in @tags
+    @next.hasTag(tag)
 
 class LateralMovementAdapter extends EntityAdapter
   constructor: (@next) ->
@@ -175,7 +180,7 @@ class GrabAdapter extends EntityAdapter
   _selectTarget: ->
     centre = @getPosition()
     World.select (potential) ->
-      return false unless potential.canGrab()
+      return false unless potential.hasTag('grabbable')
       centrePotential = potential.getPosition()
       distance = (Math.abs(centre.x - centrePotential.x) +
                   Math.abs(centre.y - centrePotential.y))
@@ -195,14 +200,11 @@ class GrabAdapter extends EntityAdapter
     def.Initialize(body, targetBody, anchor)
     @current = [target, body.GetWorld().CreateJoint(def)]
 
-class GrabbableAdapter extends EntityAdapter
-  canGrab: -> true
-
 class PoisonAdapter extends EntityAdapter
-  constructor: (@callback, @next) ->
+  constructor: (@callback, @tag, @next) ->
 
   collideInto: (entity) ->
-    @callback() if entity.isPlayer()
+    @callback(entity) if entity.hasTag(@tag)
     @next.collideInto(entity)
 
 class ScoreAdapter extends EntityAdapter
@@ -277,7 +279,7 @@ class DebugLateralMovementAdapter extends EntityAdapter
 @LateralMovementAdapter = LateralMovementAdapter
 @JumpSpacingAdapter = JumpSpacingAdapter
 @GrabAdapter = GrabAdapter
-@GrabbableAdapter = GrabbableAdapter
+@TagAdapter = TagAdapter
 @PoisonAdapter = PoisonAdapter
 @ScoreAdapter = ScoreAdapter
 @RotateWithWorldAdapter = RotateWithWorldAdapter

@@ -140,22 +140,18 @@ var Physics = function() {
                 e = new RotateWithWorldAdapter(e);
             }
             if (/d/.exec(flags)) {
-                e = new PoisonAdapter(endGameCallback, e);
+                e = new PoisonAdapter(endGameCallback, 'player', e);
             }
             if (/g/.exec(flags)) {
-                e = new GrabbableAdapter(e);
+                e = new TagAdapter(['grabbable'], e);
                 e = new ScoreAdapter(e);
             }
             if (/t/.exec(flags)) {
+                e = new TagAdapter(['block'], e);
                 e = new LimitedLifespanAdapter(10, function() {
                     var total = 0;
                     World.all(function(x) {
-                        body = x.getBody();
-                        if (!body) {
-                            return;
-                        }
-                        ud = x.getBody().GetUserData();
-                        if (ud && ud.tag == 'BLOCK') {
+                        if (e.hasTag('block')) {
                             total += 1;
                         }
                     });
@@ -163,6 +159,7 @@ var Physics = function() {
                 }, e);
             }
             if (/c/.exec(flags)) {
+                e = new TagAdapter(['player'], e);
                 e = new LateralMovementAdapter(e);
                 e = new GrabAdapter(e);
                 e = new JumpAdapter(e);
