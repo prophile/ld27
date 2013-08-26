@@ -192,7 +192,7 @@ class GrabAdapter extends EntityAdapter
       centrePotential = potential.getPosition()
       distance = (Math.abs(centre.x - centrePotential.x) +
                   Math.abs(centre.y - centrePotential.y))
-      return false if distance > 1000000
+      return false if distance > Constants.k('grab_distance_limit')
       return distance
 
   _grabCargo: ->
