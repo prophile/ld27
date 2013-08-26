@@ -162,19 +162,28 @@ var Game = function() {
             }, blockSpawnDelayMs);
         }
 
+        var spinInterval = null;
+
+        var direction = 1;
+        var ticks = 0;
         function spin(periods) {
             lastSpin = unixTime();
             min = Constants.k('minimum_rotation');
             max = Constants.k('maximum_rotation');
-            if (Constants.k('debug_noSpin'))
-                return;
-            var direction = Math.ceil(Math.random());
-            if (direction == 0) {
-                direction = -1;
+
+            console.log(ticks);
+            ticks++;
+            if (ticks > Constants.k("spin_change_min_ticks") && Math.random() < Constants.k("spin_change_prob")) {
+                console.log("change!!!!!!!!!!!");
+                ticks = 0;
+                direction = -direction;
             }
 
+            if (Constants.k('debug_noSpin'))
+                return;
+
             var range = max - min;
-            var angle = (periods * Constants.k("spin_increase")) * (min + Math.random() * range);
+            var angle = direction * (periods * Constants.k("spin_increase")) * (min + Math.random() * range);
             physics.setTargetRotation(angle + physics.getRotation());
         }
 
