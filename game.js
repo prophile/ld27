@@ -55,16 +55,19 @@ var Game = function() {
         this.setupGame = function() {
             physics = new Physics(context, gameWidth, gameHeight, function() {
                 stateBus.push(END_SCREEN);
-                Sound.playSound("http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/bell.mp3");
+                Sound.playBell();
                 var text = new PIXI.Text("Score: " + score, {font:"50px Arial", fill:"black"});
                 text.position.y = 250;
                 endContainer.addChild(text);
                 that.rotation = 0;
                 $("#container").resetRotate();
             }, function(timeRemaining) {
-                if (timeRemaining == 5) {
-                    Sound.playSound("http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/clock_tick_002.mp3");
+                if (timeRemaining <= 5) {
+                    Sound.playWarning();
+                } else {
+                    Sound.stopWarning();
                 }
+
                 $("#time").css({"width":(timeRemaining/10.0*canvasSize()) + "px"});
             });
             currentState.changes()

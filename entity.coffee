@@ -143,7 +143,8 @@ class LateralMovementAdapter extends EntityAdapter
 
 class JumpAdapter extends EntityAdapter
   doJump: ->
-    setTimeout( (-> Sound.playSound("http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/jump.wav")), 0)
+    _.defer ->
+      Sound.playJump()
     jumpHeight = Constants.k('movement_vertical')
     jumpHeight = Constants.k('movement_vertical_cargo') if @hasCargo()
     body = @getBody()

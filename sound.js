@@ -5,6 +5,9 @@ var Sound = (function() {
     var musicEnabled = new Bacon.Bus();
     var musicLoaded = new Bacon.Bus();
 
+    var warningRequested = new Bacon.Bus();
+    var warningLoaded = new Bacon.Bus();
+
     Constants.wait(function() {
         enabled = Constants.k('music_enable');
     });
@@ -32,6 +35,31 @@ var Sound = (function() {
         console.log("Stopping music.");
     });
 
+    var warningPlaying = warningRequested.toProperty(false)
+                                         .and(warningLoaded.toProperty(false));
+    var warningStartStop = warningPlaying.changes().skip(1).skipDuplicates();
+
+    var warning = new Howl({
+        urls: ['http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/clock_tick_002.mp3'],
+        onload: function() {
+            warningLoaded.push(true);
+        }
+    });
+
+    warningStartStop.filter(function(x) { return x; }).onValue(function() {
+        warning.play();
+        console.log("Playing warning.");
+    });
+
+    warningStartStop.filter(function(x) { return !x; }).onValue(function() {
+        warning.stop();
+        console.log("Stopping warning.");
+    });
+
+    var collect = new Howl({urls: ['http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/collect.wav']});
+    var bell = new Howl({urls: ['http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/bell.mp3']});
+    var jump = new Howl({urls: ['http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/jump.wav']});
+
     var playSound = function(url) {
         console.log("palying");
         var sound = new Howl({
@@ -47,8 +75,22 @@ var Sound = (function() {
         musicRequested.push(false);
     };
 
+    var playWarning = function() {
+        warningRequested.push(true);
+    };
+
+    var stopWarning = function() {
+        warningRequested.push(false);
+    };
+
+    var doNothing = function() {};
+
     return {'playMusic': playMusic,
             'stopMusic': stopMusic,
-            'playSound': playSound};
+            'playWarning': playWarning,
+            'stopWarning': stopWarning,
+            'playBell': function() { bell.play(); },
+            'playJump': function() { jump.play(); },
+            'playCollect': function() { collect.play(); }};
 }());
 
