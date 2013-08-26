@@ -90,6 +90,9 @@ var Physics = function() {
             randomness = Constants.k('spawn_randomness');
             var bodyDef                  = new b2BodyDef();
             bodyDef.type                 = b2Body.b2_dynamicBody;
+            if (cls == 'block') {
+                bodyDef.angularDamping       = 0.7;
+            }
             if (/c/.exec(flags)) {
                 fd.shape.SetAsBox(1, 2.5);
             } else {
