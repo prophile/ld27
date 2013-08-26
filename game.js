@@ -277,17 +277,16 @@ var Game = function() {
             Sound.playMusic();
         }
 
-        var preload_image = function(uri) {
-            PIXI.Texture.fromImage(uri, true);
+        var preload_asset = function(a) {
+            PIXI.Texture.fromImage('http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/ArtAssets/' + a + '.png', true);
         };
 
         var preload = function() {
             // reload keys
-            var KEYS = ['block_image',
-                        'player_image',
-                        'block_bad_image'];
+            var KEYS = ['Mouse_Static',
+                        'Mouse_Static_Right'];
             _.each(KEYS, function(key) {
-                _.each(Constants.k(key).split(' '), preload_image);
+                preload_asset(key);
             });
         };
     };

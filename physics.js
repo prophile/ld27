@@ -119,11 +119,14 @@ var Physics = function() {
 
             var e = new BaseEntity();
 
+            var asset = function(a) {
+                return PIXI.Texture.fromImage('http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/ArtAssets/' + a + '.png', true);
+            };
+
             // pick a source
             value = value.split(' ');
             value = value[Math.floor(Math.random() * value.length)];
-            var beeTexture = PIXI.Texture.fromImage(value, true);
-            var beeSprite = new PIXI.Sprite(beeTexture);
+            var beeSprite = new PIXI.Sprite(asset(value));
 
             if (/c/.exec(flags)) {
                 beeSprite.anchor.x = 0.42;
@@ -171,9 +174,6 @@ var Physics = function() {
                 e = new DebugLateralMovementAdapter(e);
                 e = new JumpSpacingAdapter(e);
                 e = new ControlAdapter(e);
-                var asset = function(a) {
-                    return PIXI.Texture.fromImage('http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/ArtAssets/' + a + '.png', true);
-                };
                 var left = [asset('Mouse_Static')];
                 var right = [asset('Mouse_Static_Right')];
                 var leftw = [asset('Mouse_Walkleft_a'),
