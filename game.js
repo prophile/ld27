@@ -66,8 +66,9 @@ var Game = function() {
                         .filter(function(x) { return x == GAME; })
                         .onValue(function() {
                             setTimeout(function() {
-                physics.startClock();
+                                physics.startClock();
                             }, Constants.k("first_spin_delay")*1000);
+                spawnBlocks();
             });
             pixiSetup();
             soundSetup();
@@ -133,7 +134,6 @@ var Game = function() {
             spinIfNecessary();
             physics.update(function() {
                 lastSpin = unixTime();
-                spawnBlocks();
             });
             $("#container").rotate(physics.getRotation());
         };
@@ -147,18 +147,11 @@ var Game = function() {
         }
 
         function spawnBlocks() {
-            blocksToSpawn = Constants.k('blocks_to_spawn');
             blockSpawnDelayMs = Constants.k('block_spawn_delay_ms');
             if (Constants.k('debug_noSpawnBlocks'))
                 return;
-            lastSpawn = unixTime();
-            var block_count = 0;
             var timer = setInterval(function() {
                 physics.newBlock("block", container);
-                block_count++;
-                if (block_count == blocksToSpawn) {
-                    clearInterval(timer);
-                }
             }, blockSpawnDelayMs);
         }
 
