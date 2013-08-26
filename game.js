@@ -13,6 +13,12 @@ var Game = function() {
         var renderer = null;
         var physics  = null;
         var context  = null;
+        var periods  = 1;
+
+        setInterval(function() {
+            periods++;
+            console.log("new period");
+        }, Constants.k("spin_increase_period"));
 
         gameWidth = size;
         gameHeight = size;
@@ -133,7 +139,7 @@ var Game = function() {
         function spinIfNecessary() {
             value = Constants.k('spin_interval');
             if (unixTime() - lastSpin > value) {
-                spin();
+                spin(periods);
             }
         }
 
@@ -153,7 +159,7 @@ var Game = function() {
             }, blockSpawnDelayMs);
         }
 
-        function spin() {
+        function spin(periods) {
             lastSpin = unixTime();
             min = Constants.k('minimum_rotation');
             max = Constants.k('maximum_rotation');
@@ -165,7 +171,7 @@ var Game = function() {
             }
 
             var range = max - min;
-            var angle = min + Math.random() * range;
+            var angle = (periods * Constants.k("spin_increase")) * (min + Math.random() * range);
             physics.setTargetRotation(angle + physics.getRotation());
         }
 
