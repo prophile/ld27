@@ -55,6 +55,7 @@ var Game = function() {
         this.setupGame = function() {
             physics = new Physics(context, gameWidth, gameHeight, function() {
                 stateBus.push(END_SCREEN);
+                Sound.playSound("http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/bell.mp3");
                 that.rotation = 0;
                 setTimeout(function() {
                     $("#container").resetRotate();
@@ -131,9 +132,6 @@ var Game = function() {
         this.update = function() {
             value = Constants.k('target_cheeses');
             $("#removed").text("Score: " + score);
-            if (physics.boxesRemoved >= value) {
-                stateBus.push(END_SCREEN);
-            }
             spinIfNecessary();
             physics.update(function() {
                 lastSpin = unixTime();
