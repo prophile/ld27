@@ -183,8 +183,13 @@ var Physics = function() {
             }
         };
 
+        var lastTick = 0;
         var doneRotating = true
         this.update = function(callback) {
+            var currentTime = unixTime();
+            if (currentTime - lastTick < (1/60))
+                return;
+            lastTick = currentTime;
             if (Math.abs(targetRotation - rotation) > turnRate) {
                 doneRotating = false;
                 function sign(x) { return x ? x < 0 ? -1 : 1 : 0; }
