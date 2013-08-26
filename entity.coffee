@@ -213,14 +213,12 @@ class GrabAdapter extends EntityAdapter
     headLocation = new Box2D.Common.Math.b2Vec2(srcCentre.x + headOffX,
                                                 srcCentre.y + headOffY)
     targetBody.SetPosition(headLocation)
-    def = new Box2D.Dynamics.Joints.b2DistanceJointDef()
+    def = new Box2D.Dynamics.Joints.b2WeldJointDef()
     def.Initialize(body, targetBody,
-                   headLocation,
-                   targetBody.GetWorldCenter())
+                   headLocation)
     def.frequencyHz = Constants.k('lift_frequency')
     def.dampingRatio = Constants.k('lift_damping')
     @current = [target, body.GetWorld().CreateJoint(def)]
-    targetBody.SetPosition(dstCentre)
 
 class PoisonAdapter extends EntityAdapter
   constructor: (@callback, @tag, @next) ->
