@@ -117,6 +117,10 @@ var Physics = function() {
             setPhysicalProperties(cls, fix);
 
             var e = new BaseEntity();
+
+            // pick a source
+            value = value.split(' ');
+            value = value[Math.floor(Math.random() * value.length)];
             var beeTexture = PIXI.Texture.fromImage(value, true);
             var beeSprite = new PIXI.Sprite(beeTexture);
 
