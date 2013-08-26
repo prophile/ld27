@@ -170,6 +170,25 @@ var Physics = function() {
                 e = new DebugLateralMovementAdapter(e);
                 e = new JumpSpacingAdapter(e);
                 e = new ControlAdapter(e);
+                var asset = function(a) {
+                    return PIXI.Texture.fromImage('http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/ArtAssets/' + a + '.png', true);
+                };
+                var left = [asset('Mouse_Static')];
+                var right = [asset('Mouse_Static_Right')];
+                var leftw = [asset('Mouse_Walkleft_a'),
+                             asset('Mouse_Walkleft_b'),
+                             asset('Mouse_Walkleft_c'),
+                             asset('Mouse_Walkleft_d')];
+                var rightw = [asset('Mouse_Walkright_a'),
+                              asset('Mouse_Walkright_b'),
+                              asset('Mouse_Walkright_c'),
+                              asset('Mouse_Walkright_d')];
+                e = new AnimationAdapter(0.1, {'stop_left': left,
+                                               'stop_right': right,
+                                               'walk_left': leftw,
+                                               'walk_right': rightw}, e);
+                e = new LeftRightAnimationAdapter(e);
+                e = new MovementBasedAnimationAdapter(e);
             }
             body.SetUserData({tag: "ENTITY", entity:e});
             World.add(e);

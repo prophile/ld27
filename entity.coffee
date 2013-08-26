@@ -286,6 +286,20 @@ class SpriteAdapter extends EntityAdapter
     @stage.removeChild @sprite
     @next.doDetach()
 
+class LeftRightAnimationAdapter extends EntityAdapter
+  setAnimation: (anim) ->
+    dir = @next.getFacing()
+    @next.setAnimation "#{anim}_#{dir}"
+
+class MovementBasedAnimationAdapter extends EntityAdapter
+  doTick: ->
+    body = @getBody()
+    if body?
+      vel = body.GetLinearVelocity()
+      euclidean = Math.sqrt(vel.x*vel.x + vel.y*vel.y)
+      @setAnimation(if euclidean > 0.4 then "walk" else "stop")
+    @next.doTick()
+
 class AnimationAdapter extends EntityAdapter
   constructor: (@period, @animations, @next) ->
     @currentAnimation = null
@@ -333,4 +347,6 @@ class DebugLateralMovementAdapter extends EntityAdapter
 @FixedLocationAdapter = FixedLocationAdapter
 @LimitedLifespanAdapter = LimitedLifespanAdapter
 @AnimationAdapter = AnimationAdapter
+@LeftRightAnimationAdapter = LeftRightAnimationAdapter
+@MovementBasedAnimationAdapter = MovementBasedAnimationAdapter
 
