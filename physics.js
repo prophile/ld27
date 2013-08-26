@@ -296,15 +296,15 @@ var Physics = function() {
         }
 
         function newWorld(endGameCallback) {
-            addWall(gameWidth/2, 0, 10000, 3, 0, 0, 0);
-            addWall(gameWidth/2, gameHeight, 10000, 3, 0, 0, 0);
-            addWall(0, gameHeight/2, 3, 100000, 0, 0, 0);
-            addWall(gameWidth, gameHeight/2, 3, 100000, 0, 0, 0);
+            addWall(gameWidth/2, 18, 10000, 3, 0, 0, 0);
+            addWall(gameWidth/2, gameHeight-18, 10000, 3, 0, 0, 0);
+            addWall(18, gameHeight/2, 3, 100000, 0, 0, 0);
+            addWall(gameWidth-18, gameHeight/2, 3, 100000, 0, 0, 0);
             //addWall(gameWidth, gameHeight/2, 100000, 3, 45, 3, 3);
-            addWall(gameWidth+gameWidth*0.25, gameHeight/2, 100000, 3, 45, 0, 0);
-            addWall(-gameWidth*0.25, gameHeight/2, 100000, 3, 45, 0, 0);
-            addWall(gameWidth/2, -gameHeight*0.25, 10000, 3, -45, 0, 0);
-            addWall(gameWidth/2, gameHeight+gameHeight*0.25, 10000, 3, -45, 0, 0);
+            addWall(gameWidth+gameWidth*0.19, gameHeight/2, 100000, 3, 45, 0, 0);
+            addWall(-gameWidth*0.19, gameHeight/2, 100000, 3, 45, 0, 0);
+            addWall(gameWidth/2, -gameHeight*0.19, 10000, 3, -45, 0, 0);
+            addWall(gameWidth/2, gameHeight+gameHeight*0.19, 10000, 3, -45, 0, 0);
             var myContactListener = {
                 "BeginContact" : function(contact) {
                     var data1 = contact.GetFixtureA().GetBody().GetUserData();
