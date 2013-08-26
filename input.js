@@ -14,6 +14,22 @@ var Input = (function() {
             return function(x) {
                 return x.keyCode == 32;
             };
+        } else if (identifier == 'LeftArrow') {
+            return function(x) {
+                return x.keyCode == 37;
+            };
+        } else if (identifier == "RightArrow") {
+            return function(x) {
+                return x.keyCode == 39;
+            };
+        } else if (identifier == "UpArrow") {
+            return function(x) {
+                return x.keyCode == 38;
+            };
+        } else if (identifier == "DownArrow") {
+            return function(x) {
+                return x.keyCode == 40;
+            };
         } else {
             return function(x) {
                 return x.keyIdentifier == identifier;
