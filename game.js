@@ -156,7 +156,7 @@ var Game = function() {
         }
 
         function spawnBlocks() {
-            blockSpawnDelayMs = Constants.k('block_spawn_delay_ms');
+            blockSpawnDelayMs = Constants.k('block_spawn_delay_ms') * periods;
             if (Constants.k('debug_noSpawnBlocks'))
                 return;
             var timer = setInterval(function() {
