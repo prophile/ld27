@@ -195,13 +195,23 @@ class GrabAdapter extends EntityAdapter
     return unless target?
     body = @getBody()
     targetBody = target.getBody()
+    headOffset = [0, -4.2]
+    physics = body.GetWorld().UserData
+    [headOffX, headOffY] = physics.rotate(headOffset)
     srcCentre = body.GetWorldCenter()
     dstCentre = targetBody.GetWorldCenter()
-    anchor = new Box2D.Common.Math.b2Vec2(0.5*(srcCentre.x + dstCentre.x),
-                                          0.5*(srcCentre.y + dstCentre.y))
-    def = new Box2D.Dynamics.Joints.b2WeldJointDef
-    def.Initialize(body, targetBody, anchor)
+    # what a hack
+    headLocation = new Box2D.Common.Math.b2Vec2(srcCentre.x + headOffX,
+                                                srcCentre.y + headOffY)
+    targetBody.SetPosition(headLocation)
+    def = new Box2D.Dynamics.Joints.b2DistanceJointDef()
+    def.Initialize(body, targetBody,
+                   headLocation,
+                   targetBody.GetWorldCenter())
+    def.frequencyHz = Constants.k('lift_frequency')
+    def.dampingRatio = Constants.k('lift_damping')
     @current = [target, body.GetWorld().CreateJoint(def)]
+    targetBody.SetPosition(dstCentre)
 
 class PoisonAdapter extends EntityAdapter
   constructor: (@callback, @tag, @next) ->
