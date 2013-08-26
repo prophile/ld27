@@ -135,7 +135,9 @@ var Physics = function() {
             }
             if (/g/.exec(flags)) {
                 e = new TagAdapter(['worthPoints', 'grabbable'], e);
-                e = new ScoreAdapter(e);
+                e = new ScoreAdapter(function(x) {
+                    x.seppuku();
+                }, e);
             }
             if (/t/.exec(flags)) {
                 e = new TagAdapter(['block'], e);

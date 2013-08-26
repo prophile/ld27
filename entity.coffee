@@ -211,6 +211,8 @@ class PoisonAdapter extends EntityAdapter
     @next.collideInto(entity)
 
 class ScoreAdapter extends EntityAdapter
+  constructor: (@callback, @next) ->
+
   doAttach: ->
     @spawnTime = unixTime()
     @next.doAttach()
@@ -218,7 +220,7 @@ class ScoreAdapter extends EntityAdapter
   doHitGoal: ->
     currentTime = unixTime()
     age = currentTime - @spawnTime
-    @seppuku() unless age < 5
+    @callback(this) unless age < 5
 
 class LimitedLifespanAdapter extends EntityAdapter
   constructor: (@lifespan, @callback, @next) ->
