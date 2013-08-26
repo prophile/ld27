@@ -65,7 +65,9 @@ var Game = function() {
             currentState.changes()
                         .filter(function(x) { return x == GAME; })
                         .onValue(function() {
+                            setTimeout(function() {
                 physics.startClock();
+                            }, Constants.k("first_spin_delay")*1000);
             });
             pixiSetup();
             soundSetup();
