@@ -6,7 +6,7 @@ World = do ->
     objects.push object
   del: (object) ->
     object.doDetach()
-    objects = obj for obj in objects when obj isnt object
+    objects = (obj for obj in objects when obj isnt object)
   all: (callback) ->
     callback(obj) for obj in objects
   select: (callback) ->
