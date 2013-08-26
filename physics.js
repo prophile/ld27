@@ -326,7 +326,6 @@ var Physics = function() {
             floorBodyDef.position.y           = gameSize*0.5/PIXELS_PER_METER;
             var body = that.world.CreateBody(floorBodyDef);
 
-            body.SetUserData({tag: "ENTITY"});
             var fix = body.CreateFixture(floorDef);
 
             var e = new BaseEntity();
@@ -344,6 +343,7 @@ var Physics = function() {
             e = new PoisonAdapter(function(x) {
                 x.doHitGoal();
             }, 'worthPoints', e);
+            body.SetUserData({tag: "ENTITY", entity: e});
             World.add(e);
         }
 
