@@ -33,6 +33,8 @@ $ ->
   setInterval tickAll, 1000 / 60
 
 class BaseEntity
+  setTexture: ->
+  setAnimation: ->
   getBody: -> null
   doJump: ->
   doMoveLeft: ->
@@ -68,6 +70,8 @@ class EntityAdapter
   hasCargo: -> @next.hasCargo()
   getFacing: -> @next.getFacing()
   doHitWall: -> @next.doHitWall()
+  setAnimation: (anim) -> @next.setAnimation(anim)
+  setTexture: (tex) -> @next.setTexture(tex)
 
   seppuku: -> World.del(this)
 
@@ -264,6 +268,9 @@ class RotateWithWorldAdapter extends EntityAdapter
 class SpriteAdapter extends EntityAdapter
   constructor: (@stage, @sprite, @next) ->
 
+  setTexture: (tex) ->
+    @sprite.setTexture tex
+
   doTick: ->
     pos = @getPosition()
     @sprite.position = new PIXI.Point(pos.x * PIXELS_PER_METER,
@@ -278,6 +285,21 @@ class SpriteAdapter extends EntityAdapter
   doDetach: ->
     @stage.removeChild @sprite
     @next.doDetach()
+
+class AnimationAdapter extends EntityAdapter
+  constructor: (@period, @animations, @next) ->
+    @currentAnimation = null
+    @phase = Math.random() * 60*60*24*365
+
+  setAnimation: (anim) ->
+    @currentAnimation = anim
+
+  doTick: ->
+    if @currentAnimation?
+      frames = @animations[@currentAnimation]
+      frame = Math.floor((@phase + unixTime()) / @period) % frames.length
+      @setTexture frames[frame]
+    @next.doTick()
 
 class DebugLateralMovementAdapter extends EntityAdapter
   doMoveLeft: (en) ->
@@ -310,4 +332,5 @@ class DebugLateralMovementAdapter extends EntityAdapter
 @DebugLateralMovementAdapter = DebugLateralMovementAdapter
 @FixedLocationAdapter = FixedLocationAdapter
 @LimitedLifespanAdapter = LimitedLifespanAdapter
+@AnimationAdapter = AnimationAdapter
 
