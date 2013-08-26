@@ -2,17 +2,20 @@ World = do ->
   objects = []
 
   add: (object) ->
+    throw "Cannot add nonexistant object." unless object.getBase()?
     object.doAttach()
     objects.push object
   del: (object) ->
-    newObjects = []
-    target = object.getBase()
-    for obj in objects
-      if obj.getBase() is target
-        obj.doDetach()
-      else
-        newObjects.push obj
-    objects = newObjects
+    _.defer ->
+      newObjects = []
+      target = object.getBase()
+      for obj in objects
+        continue unless obj?
+        if obj.getBase() is target
+          obj.doDetach()
+        else
+          newObjects.push obj
+      objects = newObjects
   all: (callback) ->
     callback(obj) for obj in objects
   select: (callback) ->
