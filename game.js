@@ -2,7 +2,7 @@ var Game = function() {
     return function(size) {
 
         var that      = this;
-        var lastSpin  = unixTime();
+        var lastSpin  = unixTime() + Constants.k("first_spin_delay");
         var lastSpawn = unixTime();
         var TITLE_SCREEN = 0;
         var GAME = 1;
@@ -138,6 +138,7 @@ var Game = function() {
 
         function spinIfNecessary() {
             value = Constants.k('spin_interval');
+            console.log(lastSpin);
             if (unixTime() - lastSpin > value) {
                 spin(periods);
             }
@@ -187,7 +188,7 @@ var Game = function() {
 
         function pixiSetup() {
             preload();
-            lastSpin = unixTime();
+            lastSpin = unixTime() + Constants.k("first_spin_delay");
             lastSpawn = unixTime();
             stage = new PIXI.Stage(0x66FF99);
             container = new PIXI.DisplayObjectContainer();
