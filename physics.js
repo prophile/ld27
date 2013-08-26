@@ -12,6 +12,9 @@ var Physics = function() {
             return debugDraw;
         }
 
+        var worldClock = new Clock(Constants.k('game_length'));
+        worldClock.onOver(endGameCallback);
+
         var b2Vec2 = Box2D.Common.Math.b2Vec2;
         var b2BodyDef = Box2D.Dynamics.b2BodyDef;
         var b2Body = Box2D.Dynamics.b2Body;
@@ -137,6 +140,7 @@ var Physics = function() {
                 e = new TagAdapter(['worthPoints', 'grabbable'], e);
                 e = new ScoreAdapter(function(x) {
                     x.seppuku();
+                    clock.add(Constants.k('clock_cheese_bonus'));
                 }, e);
             }
             if (/t/.exec(flags)) {
@@ -189,7 +193,9 @@ var Physics = function() {
             }
 
             that.toRemove = [];
-            that.world.Step(1/60, Constants.k('physics_velocityIterations'), Constants.k('physics_positionIterations'));
+            that.world.Step(1/60,
+                            Constants.k('physics_velocityIterations'),
+                            Constants.k('physics_positionIterations'));
             for (var i = 0; i < that.toRemove.length; i++) {
                 var body = that.toRemove[i];
                 that.world.DestroyBody(body);
