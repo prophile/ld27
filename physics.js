@@ -146,6 +146,22 @@ var Physics = function() {
                 e = new GrabbableAdapter(e);
                 e = new ScoreAdapter(e);
             }
+            if (/t/.exec(flags)) {
+                e = new LimitedLifespanAdapter(10, function() {
+                    var total = 0;
+                    World.all(function(x) {
+                        body = x.getBody();
+                        if (!body) {
+                            return;
+                        }
+                        ud = x.getBody().GetUserData();
+                        if (ud && ud.tag == 'BLOCK') {
+                            total += 1;
+                        }
+                    });
+                    return total > 20;
+                }, e);
+            }
             if (/c/.exec(flags)) {
                 e = new LateralMovementAdapter(e);
                 e = new GrabAdapter(e);

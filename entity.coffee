@@ -5,9 +5,14 @@ World = do ->
     object.doAttach()
     objects.push object
   del: (object) ->
+    newObjects = []
     target = object.getBase()
-    object.doDetach()
-    objects = (obj for obj in objects when obj.getBase() isnt object)
+    for obj in objects
+      if obj.getBase() is target
+        obj.doDetach()
+      else
+        newObjects.push obj
+    objects = newObjects
   all: (callback) ->
     callback(obj) for obj in objects
   select: (callback) ->
@@ -25,6 +30,7 @@ $ ->
   setInterval tickAll, 1000 / 60
 
 class BaseEntity
+  getBody: -> null
   doJump: ->
   doMoveLeft: ->
   doMoveRight: ->
@@ -72,6 +78,10 @@ class FixedLocationAdapter extends EntityAdapter
 
 class PhysicsEntityAdapter extends EntityAdapter
   constructor: (@body, @next) ->
+
+  doDetach: ->
+    @body.GetWorld().DestroyBody(@body)
+    @next.doDetach()
 
   getBody: -> @body
   getPosition: -> @body.GetWorldCenter()
@@ -205,6 +215,20 @@ class ScoreAdapter extends EntityAdapter
     age = currentTime - @spawnTime
     @seppuku() unless age < 5
 
+class LimitedLifespanAdapter extends EntityAdapter
+  constructor: (@lifespan, @callback, @next) ->
+
+  doAttach: ->
+    @spawnTime = unixTime()
+    @next.doAttach()
+
+  doTick: ->
+    currentTime = unixTime()
+    age = currentTime - @spawnTime
+    if age > @lifespan and @callback()
+      @seppuku()
+    @next.doTick()
+
 class RotateWithWorldAdapter extends EntityAdapter
   doTick: ->
     body = @getBody()
@@ -261,4 +285,5 @@ class DebugLateralMovementAdapter extends EntityAdapter
 @JumpAdapter = JumpAdapter
 @DebugLateralMovementAdapter = DebugLateralMovementAdapter
 @FixedLocationAdapter = FixedLocationAdapter
+@LimitedLifespanAdapter = LimitedLifespanAdapter
 
