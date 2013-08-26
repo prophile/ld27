@@ -10,10 +10,10 @@ World = do ->
   all: (callback) ->
     callback(obj) for obj in objects
   select: (callback) ->
-    [best, bestScore] = [null, 0]
+    [best, bestScore] = [null, Number.POSITIVE_INFINITY]
     for obj in objects
       result = callback(obj)
-      if result? and result < bestScore
+      if result and result < bestScore
         [best, bestScore] = [obj, result]
     best
 
@@ -80,6 +80,7 @@ class ControlAdapter extends EntityAdapter
     Input.hold('move_left', (en) => @doMoveLeft(en))
     Input.hold('move_right', (en) => @doMoveRight(en))
     Input.press('move_up', => @doJump())
+    Input.press('gravityGun', => @doGrab())
     @next.doAttach()
 
 class LateralMovementAdapter extends EntityAdapter
@@ -104,7 +105,6 @@ class LateralMovementAdapter extends EntityAdapter
     baseSpeed -= 1 if @left
     baseSpeed += 1 if @right
     baseSpeed *= Constants.k('movement_speed')
-    console.log baseSpeed
     physics = body.GetWorld().UserData
     [x_, y_] = physics.rotate([baseSpeed, 0])
     body.ApplyForce(new Box2D.Common.Math.b2Vec2(x_, y_),
@@ -120,7 +120,6 @@ class JumpAdapter extends EntityAdapter
     body = @getBody()
     physics = body.GetWorld().UserData
     [x_, y_] = physics.rotate([0, -jumpHeight])
-    console.log(x_, y_)
     body.ApplyImpulse(new Box2D.Common.Math.b2Vec2(x_, y_),
                       body.GetWorldCenter())
     @next.doJump()
@@ -144,18 +143,19 @@ class GrabAdapter extends EntityAdapter
 
   doGrab: ->
     if @hasCargo()
-      @_grabCargo()
+      @_dropCargo()
     else
-      @_dropCargo
+      @_grabCargo()
 
   _dropCargo: ->
     [target, joint] = @current
-    @body.GetWorld().DestroyJoint(joint)
+    @getBody().GetWorld().DestroyJoint(joint)
     @current = null
 
   _selectTarget: ->
     centre = @getPosition()
     World.select (potential) ->
+      return false unless potential.canGrab()
       centrePotential = potential.getPosition()
       distance = (Math.abs(centre.x - centrePotential.x) +
                   Math.abs(centre.y - centrePotential.y))
@@ -164,6 +164,7 @@ class GrabAdapter extends EntityAdapter
 
   _grabCargo: ->
     target = @_selectTarget()
+    return unless target?
     body = @getBody()
     targetBody = target.getBody()
     srcCentre = body.GetWorldCenter()
@@ -204,8 +205,6 @@ class SpriteAdapter extends EntityAdapter
     @sprite.position = new PIXI.Point(pos.x * PIXELS_PER_METER,
                                       pos.y * PIXELS_PER_METER)
     @sprite.rotation = @getRotation()
-    console.log("Sprite")
-    console.log(pos)
     @next.doTick()
 
   doAttach: ->
