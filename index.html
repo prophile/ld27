@@ -8,11 +8,24 @@
         <script src="Bacon.min.js"></script>
         <script src="ld.js"></script>
         <style>
+            body {
+                font-family:"Helvetica Neue", sans-serif;
+            }
             #container {
                 overflow: none;
                 position:absolute;
                 margin: 0 auto;
                 padding: 0;
+            }
+
+            #removed {
+                position:absolute;
+                padding:5px 0px;
+                text-align:center;
+
+                width:100%;
+                background-color:#ccc;
+                z-index:100000000000000;
             }
 
             body {
@@ -24,9 +37,14 @@
                 text-align:center;
                 background-color:#000;
                 width:0px;
-                margin: 0px auto;
+                position:absolute;
                 color:#fff;
-                z-index:1000000000;
+                top:3em;
+                left:0;
+                right:0;
+                margin-left:auto;
+                margin-right:auto;
+                z-index:100000000000000;
             }
         </style>
     </head>
