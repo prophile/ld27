@@ -1,5 +1,5 @@
 var Sound = (function() {
-    var MUSIC_SOURCE = "https://dl.dropboxusercontent.com/s/yxlhaq0abhdpxc3/music.mp3?token_hash=AAEHavddSaEmHL6s2nm3kVNdeVzTmTWHZB2cC9sQkQ24mQ&dl=1";
+    var MUSIC_SOURCE = "http://badman.teaisaweso.me/?uri=game.teaisaweso.me/dropbox-assets/Sound/music.mp3";
 
     var musicRequested = new Bacon.Bus();
     var musicEnabled = new Bacon.Bus();
