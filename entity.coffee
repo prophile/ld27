@@ -134,7 +134,7 @@ class LateralMovementAdapter extends EntityAdapter
     baseSpeed += 1 if @right
     baseSpeed *= Constants.k('movement_speed')
     physics = body.GetWorld().UserData
-    [x_, y_] = physics.rotate([baseSpeed, 0])
+    [x_, y_] = physics.rotate([baseSpeed, -Constants.k('movement_upforce')])
     body.ApplyForce(new Box2D.Common.Math.b2Vec2(x_, y_),
                     body.GetWorldCenter())
     @next.doTick()
