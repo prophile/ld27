@@ -47,13 +47,11 @@ var Game = function() {
                 setTimeout(function() {
                     $("#container").resetRotate();
                 }, 300);
-                console.log("reset");
             });
             pixiSetup();
             soundSetup();
             Input.press("title_to_game", function() {
                 if (state === TITLE_SCREEN) {
-                    console.log("pushed");
                     state = GAME;
                 } else if (state === END_SCREEN) {
                     location.reload();
@@ -132,8 +130,6 @@ var Game = function() {
 
             var range = max - min;
             var angle = min + Math.random() * range;
-            console.log(angle);
-            console.log(range);
             physics.setTargetRotation(angle + physics.getRotation());
         }
 
@@ -141,7 +137,6 @@ var Game = function() {
             physics.draw(canvasSize()/gameWidth);
             container.scale.x = canvasSize()/gameWidth;
             container.scale.y = canvasSize()/gameWidth;
-            //console.log(stage.scale);
             renderer.render(stage);
         };
 
@@ -158,7 +153,6 @@ var Game = function() {
             stage.addChild(container);
             value = Constants.k('clock_face');
             var clock = new BaseEntity();
-            console.log(value);
             var beeTexture = PIXI.Texture.fromImage(value, true);
             var beeSprite = new PIXI.Sprite(beeTexture);
             beeSprite.width = gameWidth;

@@ -30,7 +30,6 @@ var Input = (function() {
             var match = /^key_(.*)/.exec(key);
             if (match) {
                 var command = match[1];
-                console.log(match);
                 var matcher = recogniser(binding);
                 mapping.push([matcher, command]);
             }

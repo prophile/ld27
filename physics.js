@@ -77,13 +77,10 @@ var Physics = function() {
             fd.density = 1.0;
             fd.friction = 0.3;
             fd.restitution = 0.1;
-            console.log("here");
 
             badBlockChance = Constants.k('block_bad_prob');
             var killsYou = Math.random() < badBlockChance;
-            console.log(killsYou);
             if (cls == "block" && killsYou) {
-                console.log("lol");
                 cls = "block_bad";
             }
 
@@ -177,7 +174,6 @@ var Physics = function() {
                 if (!doneRotating) {
                     rotation = targetRotation;
                     callback();
-                    console.log("done rotating");
                     doneRotating = true;
                 }
             }
@@ -233,7 +229,6 @@ var Physics = function() {
             var fix = body.CreateFixture(platformDef);
             setPhysicalProperties('platform', fix, true);
 
-            console.log("New platform created");
         }
 
         function addWall(x, y, width, height, rotation, offset1, offset2) {
@@ -276,7 +271,6 @@ var Physics = function() {
                     var data2 = contact.GetFixtureB().GetBody().GetUserData();
                     if (data1 && data2) {
                         if (data1.entity !== undefined && data2.entity !== undefined) {
-                            console.log("ENTITY HIT");
                             data1.entity.collideInto(data2.entity);
                             data2.entity.collideInto(data1.entity);
                         }
