@@ -139,10 +139,10 @@ var Physics = function() {
             if (/c/.exec(flags)) {
                 body.SetUserData({tag: "PLAYER", entity:e});
                 e = new LateralMovementAdapter(e);
+                e = new GrabAdapter(e);
                 e = new JumpAdapter(e);
                 e = new DebugLateralMovementAdapter(e);
                 e = new JumpSpacingAdapter(e);
-                e = new GrabAdapter(e);
                 e = new ControlAdapter(e);
             }
             if (/f/.exec(flags)) {
