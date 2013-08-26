@@ -224,7 +224,7 @@ var Physics = function() {
             var body = that.world.CreateBody(platformBodyDef);
             body.SetAngle(orientationRadians);
 
-            body.SetUserData({'tag': 'PLATFORM'});
+            body.SetUserData({'tag': 'WALL'});
 
             var fix = body.CreateFixture(platformDef);
             setPhysicalProperties('platform', fix, true);
@@ -285,6 +285,12 @@ var Physics = function() {
                             if (unixTime() - data1.spawnTime > 5) {
                                 that.toRemove.push(contact.GetFixtureA().GetBody());
                             }
+                        }
+                        if (data1.tag == "WALL" && data2.entity != null) {
+                            data2.entity.doHitWall();
+                        }
+                        if (data2.tag == "WALL" && data1.entity != null) {
+                            data1.entity.doHitWall();
                         }
                     }
                 },

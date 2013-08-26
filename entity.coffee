@@ -39,6 +39,7 @@ class BaseEntity
   getBase: -> this
   isPlayer: -> false
   getFacing: -> "right"
+  doHitWall: ->
 
 class EntityAdapter
   constructor: (@next) ->
@@ -60,6 +61,7 @@ class EntityAdapter
   hasCargo: -> @next.hasCargo()
   isPlayer: -> @next.isPlayer()
   getFacing: -> @next.getFacing()
+  doHitWall: -> @next.doHitWall()
   seppuku: -> World.del(this)
 
 class FixedLocationAdapter extends EntityAdapter
@@ -138,6 +140,10 @@ class JumpSpacingAdapter extends EntityAdapter
     return unless timeSince > Constants.k('jump_cooldown')
     @lastJump = currentTime
     @next.doJump()
+
+  doHitWall: ->
+    @lastJump = Number.NEGATIVE_INFINITY
+    @next.doHitWall()
 
 class GrabAdapter extends EntityAdapter
   constructor: (@next) ->
