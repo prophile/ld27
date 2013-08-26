@@ -46,15 +46,6 @@ var Physics = function() {
         this.world = new b2World(newGravity(), false);
         this.world.UserData = this;
 
-        var debugDraw = newDebugDraw();
-
-        if (Constants.k('debug_physics')) {
-            that.world.SetDebugDraw(debugDraw);
-        } else {
-            that.world.SetDebugDraw(null);
-            debugDraw.m_sprite.graphics.clear();
-        }
-
         gravity = Constants.k('world_gravity');
         that.world.SetGravity(newGravity());
 
@@ -172,9 +163,11 @@ var Physics = function() {
         };
 
         this.draw = function(scaleFactor) {
-            that.debugScale = scaleFactor;
-            that.world.SetDebugDraw(newDebugDraw());
-            that.world.DrawDebugData();
+            if (Constants.k('debug_physics')) {
+                that.debugScale = scaleFactor;
+                that.world.SetDebugDraw(newDebugDraw());
+                that.world.DrawDebugData();
+            }
         };
 
         var doneRotating = true
