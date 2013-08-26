@@ -166,10 +166,8 @@ var Physics = function() {
                 e = new DebugLateralMovementAdapter(e);
                 e = new JumpSpacingAdapter(e);
                 e = new ControlAdapter(e);
-                body.SetUserData({tag: "PLAYER", entity:e});
-            } else {
-                body.SetUserData({tag: "BLOCK", entity:e, "spawnTime":unixTime()});
             }
+            body.SetUserData({tag: "ENTITY", entity:e});
             World.add(e);
         };
 
@@ -328,7 +326,7 @@ var Physics = function() {
             floorBodyDef.position.y           = gameSize*0.5/PIXELS_PER_METER;
             var body = that.world.CreateBody(floorBodyDef);
 
-            body.SetUserData({tag: "GOAL"});
+            body.SetUserData({tag: "ENTITY"});
             var fix = body.CreateFixture(floorDef);
 
             var e = new BaseEntity();
