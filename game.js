@@ -64,6 +64,8 @@ var Game = function() {
             }, function(timeRemaining) {
                 if (timeRemaining == 5) {
                     Sound.playSound("http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/clock_tick_002.mp3");
+                } else {
+                    Sound.stopSound("http://badman.teaisaweso.me/?uri=http://game.teaisaweso.me/dropbox-assets/Sound/clock_tick_002.mp3");
                 }
                 $("#time").css({"width":(timeRemaining/10.0*canvasSize()) + "px"});
             });

@@ -32,11 +32,20 @@ var Sound = (function() {
         console.log("Stopping music.");
     });
 
+    sounds = {}
+
     var playSound = function(url) {
         console.log("palying");
         var sound = new Howl({
             urls: [url]
-        }).play();
+        });
+        sound.play();
+        setTimeout(function() {
+            sound.stop();
+        }, 1500);
+    }
+
+    var stopSound = function(url) {
     }
 
     var playMusic = function() {
@@ -49,6 +58,7 @@ var Sound = (function() {
 
     return {'playMusic': playMusic,
             'stopMusic': stopMusic,
-            'playSound': playSound};
+            'playSound': playSound,
+            'stopSound': stopSound,};
 }());
 
